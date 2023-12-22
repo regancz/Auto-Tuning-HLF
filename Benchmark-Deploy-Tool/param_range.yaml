@@ -146,11 +146,11 @@ Parameters:
     peer_gossip_requestStateInfoInterval:
       lower: 1s    # 假设下限为 1 秒
       upper: 10s   # 假设上限为 10 秒
-      step: 1s     # 假设每次变化步长为 1 秒
+      step: 1     # 假设每次变化步长为 1 秒
     peer_gossip_publishStateInfoInterval:
       lower: 1s    # 假设下限为 1 秒
       upper: 10s   # 假设上限为 10 秒
-      step: 1s     # 假设每次变化步长为 1 秒
+      step: 1     # 假设每次变化步长为 1 秒
     peer_gossip_publishCertPeriod:
       lower: 5s    # 假设下限为 5 秒
       upper: 30s   # 假设上限为 30 秒
@@ -158,11 +158,11 @@ Parameters:
     peer_gossip_dialTimeout:
       lower: 1s    # 假设下限为 1 秒
       upper: 10s   # 假设上限为 10 秒
-      step: 1s     # 假设每次变化步长为 1 秒
+      step: 1     # 假设每次变化步长为 1 秒
     peer_gossip_connTimeout:
       lower: 1s    # 假设下限为 1 秒
       upper: 10s   # 假设上限为 10 秒
-      step: 1s     # 假设每次变化步长为 1 秒
+      step: 1     # 假设每次变化步长为 1 秒
     peer_gossip_recvBuffSize:
       lower: 10    # 假设下限为 10
       upper: 100   # 假设上限为 100

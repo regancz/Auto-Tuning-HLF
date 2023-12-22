@@ -24,20 +24,21 @@ if __name__ == "__main__":
                                                 config_parameters['Database']['Mysql']['Password'],
                                                 config_parameters['Database']['Mysql']['Database'])
     cc_names = ['simple', 'smallbank']
-    for k, v in param_range['Parameters']['Peer'].items():
+    for k, v in param_range['Parameters']['Configtx'].items():
         lower = v['lower']
         upper = v['upper']
         step = v['step']
-        lower_value, unit = helper.convert_to_number(lower)
-        upper_value, _ = helper.convert_to_number(upper)
+        lower_value, unit = helper.convert_to_number(str(lower))
+        upper_value, unit = helper.convert_to_number(str(upper))
         # unit = lower[-1] if lower[-1].isalpha() else ''
         for i in range(lower_value, upper_value + 1, step):
-            new_value = str(i) + unit if unit else str(i)
+            new_value = (str(i) + unit) if unit else str(i)
             updates = {k: new_value}
             config_id = str(uuid.uuid1())
+            config.modify_param_yaml(ssh_client, config_parameters['ConfigPath']['Configtx'], updates)
             for cc_name in cc_names:
                 performance_id = str(uuid.uuid1())
-                config.modify_param_yaml(ssh_client, config_parameters['ConfigPath']['Peer'], updates)
+
                 deploy_fabric.deploy_fabric_and_log(ssh_client, cc_name)
                 config.modify_connection_yaml(ssh_client, config_parameters['ConfigPath']['ConnectionOrg1'], updates_connection_org1)
                 deploy_caliper.run_caliper_and_log(ssh_client, cc_name)
