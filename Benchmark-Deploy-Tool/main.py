@@ -42,7 +42,7 @@ if __name__ == "__main__":
                 deploy_fabric.deploy_fabric_and_log(ssh_client, cc_name)
                 config.modify_connection_yaml(ssh_client, config_parameters['ConfigPath']['ConnectionOrg1'], updates_connection_org1)
                 deploy_caliper.run_caliper_and_log(ssh_client, cc_name)
-                order_param = config.get_config(ssh_client, config_parameters['ConfigPath']['Peer'],
+                order_param = config.get_config(ssh_client, config_parameters['ConfigPath']['Orderer'],
                                                 config_parameters['Parameters']['Orderer'])
                 configtx_param = config.get_config(ssh_client, config_parameters['ConfigPath']['Configtx'],
                                                    config_parameters['Parameters']['Configtx'])
