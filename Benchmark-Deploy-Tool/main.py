@@ -24,7 +24,7 @@ if __name__ == "__main__":
                                                 config_parameters['Database']['Mysql']['Password'],
                                                 config_parameters['Database']['Mysql']['Database'])
     cc_names = ['simple', 'smallbank']
-    for k, v in param_range['Parameters']['Configtx'].items():
+    for k, v in param_range['Parameters']['Peer'].items():
         lower = v['lower']
         upper = v['upper']
         step = v['step']
@@ -35,7 +35,7 @@ if __name__ == "__main__":
             new_value = (str(i) + unit) if unit else str(i)
             updates = {k: new_value}
             config_id = str(uuid.uuid1())
-            config.modify_param_yaml(ssh_client, config_parameters['ConfigPath']['Configtx'], updates)
+            config.modify_param_yaml(ssh_client, config_parameters['ConfigPath']['Peer'], updates)
             for cc_name in cc_names:
                 performance_id = str(uuid.uuid1())
 

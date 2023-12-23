@@ -91,26 +91,26 @@ Parameters:
       upper: 150000
       step: 50000
   Peer:
-    peer_keepalive_minInterval:
-      lower: 3600s   # 假设下限为 1 小时 (3600 秒)
-      upper: 14400s  # 假设上限为 4 小时 (14400 秒)
-      step: 3600    # 假设每次变化步长为 1 小时 (3600 秒)
-    peer_keepalive_client_interval:
-      lower: 10s     # 假设下限为 10 秒
-      upper: 30s     # 假设上限为 30 秒
-      step: 5       # 假设每次变化步长为 5 秒
-    peer_keepalive_client_timeout:
-      lower: 30s     # 假设下限为 30 秒
-      upper: 120s    # 假设上限为 2 分钟 (120 秒)
-      step: 10      # 假设每次变化步长为 10 秒
-    peer_keepalive_deliveryClient_interval:
-      lower: 30s     # 假设下限为 30 秒
-      upper: 90s     # 假设上限为 90 秒
-      step: 10      # 假设每次变化步长为 10 秒
-    peer_keepalive_deliveryClient_timeout:
-      lower: 10s     # 假设下限为 10 秒
-      upper: 30s     # 假设上限为 30 秒
-      step: 5       # 假设每次变化步长为 5 秒
+#    peer_keepalive_minInterval:
+#      lower: 3600s   # 假设下限为 1 小时 (3600 秒)
+#      upper: 14400s  # 假设上限为 4 小时 (14400 秒)
+#      step: 3600    # 假设每次变化步长为 1 小时 (3600 秒)
+#    peer_keepalive_client_interval:
+#      lower: 10s     # 假设下限为 10 秒
+#      upper: 30s     # 假设上限为 30 秒
+#      step: 5       # 假设每次变化步长为 5 秒
+#    peer_keepalive_client_timeout:
+#      lower: 30s     # 假设下限为 30 秒
+#      upper: 120s    # 假设上限为 2 分钟 (120 秒)
+#      step: 10      # 假设每次变化步长为 10 秒
+#    peer_keepalive_deliveryClient_interval:
+#      lower: 30s     # 假设下限为 30 秒
+#      upper: 90s     # 假设上限为 90 秒
+#      step: 10      # 假设每次变化步长为 10 秒
+#    peer_keepalive_deliveryClient_timeout:
+#      lower: 10s     # 假设下限为 10 秒
+#      upper: 30s     # 假设上限为 30 秒
+#      step: 5       # 假设每次变化步长为 5 秒
     peer_gossip_membershipTrackerInterval:
       lower: 1s      # 假设下限为 1 秒
       upper: 10s     # 假设上限为 10 秒
