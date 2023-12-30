@@ -1,6 +1,7 @@
 import paramiko
 import pymysql
 import yaml
+from sqlalchemy import create_engine
 
 
 def ssh_connect(host, port, username, password):
@@ -18,7 +19,9 @@ def mysql_connect(host, port, user, password, db):
                                  db=db,
                                  charset='utf8mb4',
                                  cursorclass=pymysql.cursors.DictCursor)
-    return connection
+    conn_str = f"mysql+pymysql://{user}:{password}@{host}:{port}/{db}"
+    engine = create_engine(conn_str)
+    return connection, engine
 
 
 def read_yaml_config(yaml_file):

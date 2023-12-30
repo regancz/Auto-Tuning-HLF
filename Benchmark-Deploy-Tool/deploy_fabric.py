@@ -7,7 +7,7 @@ import main
 
 def run_command_and_log(ssh_client, commands, log_prefix):
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    log_file = f"./log/{log_prefix}_{timestamp}.log"
+    log_file = f"D:/log/{log_prefix}_{timestamp}.log"
     logger = logging.getLogger(f'{log_prefix}_logger')
     logger.setLevel(logging.INFO)
     file_handler = logging.FileHandler(log_file, encoding='utf-8')

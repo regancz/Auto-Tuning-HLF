@@ -42,18 +42,31 @@ def feature_selection(parameter_data, performance_data, alpha=0.1, method='lasso
         pass
 
 
-def lasso_test(parameter_rows, performance_rows):
+def lasso_test(parameter_rows, performance_rows, weight):
     df1 = pd.DataFrame(parameter_rows)
+    df1 = df1.dropna(axis=1, how='any')
     df2 = pd.DataFrame(performance_rows)
+    df2 = df2.dropna(axis=1, how='any')
     frames = [df1, df2]
     df = pd.concat(frames, axis=1)
+    # TODO 按照bench_config依次分析
+    bench_grouped = df.groupby('bench_config')
+    grouped_dfs = []
+    for name, group in bench_grouped:
+        if name != 'query':
+            new_df = group.drop('bench_config', axis=1)
+            grouped_dfs.append(new_df)
+        # grouped_dfs[name] = new_df
+
+    tx_write_df = pd.concat(grouped_dfs, axis=0, ignore_index=True)
     scaler = StandardScaler()
-    df_sc = scaler.fit_transform(df)
-    df_sc = pd.DataFrame(df_sc, columns=df.columns)
-    y = df_sc['throughput']
-    X = df_sc.drop('throughput', axis=1)  # becareful inplace= False
+    tx_write_df_sc = scaler.fit_transform(tx_write_df)
+    tx_write_df_sc = pd.DataFrame(tx_write_df_sc, columns=tx_write_df.columns)
+    y = tx_write_df_sc['throughput'] * weight['throughput'] + tx_write_df_sc['avg_latency'] * weight['avg_latency'] + tx_write_df_sc['error_rate'] * weight['error_rate'] + tx_write_df_sc['disc_write'] * weight['disc_write']
+    # y = tx_write_df_sc['throughput']
+    X = tx_write_df_sc.drop(['throughput', 'avg_latency', 'error_rate', 'disc_write'], axis=1)  # be careful inplace=False
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
-    alpha_lasso = 10 ** np.linspace(-3, 1, 100)
+    alpha_lasso = 10 ** np.linspace(-3, 1, 500)
     lasso = Lasso()
     coefs_lasso = []
 
@@ -70,7 +83,7 @@ def lasso_test(parameter_rows, performance_rows):
     plt.xlabel('alpha')
     plt.ylabel('weights: scaled coefficients')
     plt.title('Lasso regression coefficients Vs. alpha')
-    plt.legend(df.drop('throughput', axis=1, inplace=False).columns)
+    # plt.legend(df.drop('throughput', axis=1, inplace=False).columns)
     plt.show()
 
     lasso = Lasso(alpha=10 ** (-2))

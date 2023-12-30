@@ -2,6 +2,8 @@ import datetime
 import logging
 import uuid
 
+import numpy as np
+
 import deploy_fabric
 import storage
 import initialize
@@ -31,7 +33,7 @@ if __name__ == "__main__":
         lower_value, unit = helper.convert_to_number(str(lower))
         upper_value, unit = helper.convert_to_number(str(upper))
         # unit = lower[-1] if lower[-1].isalpha() else ''
-        for i in range(lower_value, upper_value + 1, step):
+        for i in np.arange(lower_value, upper_value + 1, step):
             new_value = (str(i) + unit) if unit else str(i)
             updates = {k: new_value}
             config_id = str(uuid.uuid1())

@@ -111,175 +111,177 @@ Parameters:
 #      lower: 10s     # 假设下限为 10 秒
 #      upper: 30s     # 假设上限为 30 秒
 #      step: 5       # 假设每次变化步长为 5 秒
-    peer_gossip_membershipTrackerInterval:
-      lower: 1s      # 假设下限为 1 秒
-      upper: 10s     # 假设上限为 10 秒
-      step: 1       # 假设每次变化步长为 1 秒
-    peer_gossip_maxBlockCountToStore:
-      lower: 5   # 假设下限为 5
-      upper: 20  # 假设上限为 20
-      step: 5    # 假设每次变化步长为 5
-    peer_gossip_maxPropagationBurstLatency:
-      lower: 1ms   # 假设下限为 1ms
-      upper: 50ms  # 假设上限为 50ms
-      step: 5    # 假设每次变化步长为 5ms
-    peer_gossip_maxPropagationBurstSize:
-      lower: 5   # 假设下限为 5
-      upper: 20  # 假设上限为 20
-      step: 5    # 假设每次变化步长为 5
-    peer_gossip_propagateIterations:
-      lower: 1   # 假设下限为 1
-      upper: 5   # 假设上限为 5
-      step: 1    # 假设每次变化步长为 1
-    peer_gossip_propagatePeerNum:
-      lower: 1   # 假设下限为 1
-      upper: 5   # 假设上限为 5
-      step: 1    # 假设每次变化步长为 1
-    peer_gossip_pullInterval:
-      lower: 1s    # 假设下限为 1 秒
-      upper: 10s   # 假设上限为 10 秒
-      step: 1     # 假设每次变化步长为 1 秒
-    peer_gossip_pullPeerNum:
-      lower: 1     # 假设下限为 1
-      upper: 5     # 假设上限为 5
-      step: 1      # 假设每次变化步长为 1
-    peer_gossip_requestStateInfoInterval:
-      lower: 1s    # 假设下限为 1 秒
-      upper: 10s   # 假设上限为 10 秒
-      step: 1     # 假设每次变化步长为 1 秒
-    peer_gossip_publishStateInfoInterval:
-      lower: 1s    # 假设下限为 1 秒
-      upper: 10s   # 假设上限为 10 秒
-      step: 1     # 假设每次变化步长为 1 秒
-    peer_gossip_publishCertPeriod:
-      lower: 5s    # 假设下限为 5 秒
-      upper: 30s   # 假设上限为 30 秒
-      step: 5     # 假设每次变化步长为 5 秒
-    peer_gossip_dialTimeout:
-      lower: 1s    # 假设下限为 1 秒
-      upper: 10s   # 假设上限为 10 秒
-      step: 1     # 假设每次变化步长为 1 秒
-    peer_gossip_connTimeout:
-      lower: 1s    # 假设下限为 1 秒
-      upper: 10s   # 假设上限为 10 秒
-      step: 1     # 假设每次变化步长为 1 秒
-    peer_gossip_recvBuffSize:
-      lower: 10    # 假设下限为 10
-      upper: 100   # 假设上限为 100
-      step: 10     # 假设每次变化步长为 10
-    peer_gossip_sendBuffSize:
-      lower: 100   # 假设下限为 100
-      upper: 500   # 假设上限为 500
-      step: 50     # 假设每次变化步长为 50
-    peer_gossip_digestWaitTime:
-      lower: 500ms   # 假设下限为 500 毫秒
-      upper: 2000ms      # 假设上限为 2 秒
-      step: 100    # 假设每次变化步长为 100 毫秒
-    peer_gossip_requestWaitTime:
-      lower: 1000ms  # 假设下限为 1000 毫秒
-      upper: 3000ms      # 假设上限为 3 秒
-      step: 200    # 假设每次变化步长为 200 毫秒
-    peer_gossip_responseWaitTime:
-      lower: 1s    # 假设下限为 1 秒
-      upper: 5s    # 假设上限为 5 秒
-      step: 1     # 假设每次变化步长为 1 秒
-    peer_gossip_aliveTimeInterval:
-      lower: 1s    # 假设下限为 1 秒
-      upper: 10s   # 假设上限为 10 秒
-      step: 1     # 假设每次变化步长为 1 秒
-    peer_gossip_aliveExpirationTimeout:
-      lower: 10s   # 假设下限为 10 秒
-      upper: 30s   # 假设上限为 30 秒
-      step: 5     # 假设每次变化步长为 5 秒
-    peer_gossip_reconnectInterval:
-      lower: 10s   # 假设下限为 10 秒
-      upper: 60s   # 假设上限为 60 秒
-      step: 10    # 假设每次变化步长为 10 秒
-    peer_gossip_election_startupGracePeriod:
-      lower: 10s   # 假设下限为 10 秒
-      upper: 30s   # 假设上限为 30 秒
-      step: 5     # 假设每次变化步长为 5 秒
-    peer_gossip_election_membershipSampleInterval:
-      lower: 500ms  # 假设下限为 500 毫秒
-      upper: 2000ms     # 假设上限为 2 秒
-      step: 100   # 假设每次变化步长为 100 毫秒
-    peer_gossip_election_leaderAliveThreshold:
-      lower: 5s    # 假设下限为 5 秒
-      upper: 15s   # 假设上限为 15 秒
-      step: 5     # 假设每次变化步长为 5 秒
-    peer_gossip_election_leaderElectionDuration:
-      lower: 2s    # 假设下限为 2 秒
-      upper: 8s    # 假设上限为 8 秒
-      step: 2     # 假设每次变化步长为 2 秒
-    peer_gossip_pvtData_pullRetryThreshold:
-      lower: 30s   # 假设下限为 30 秒
-      upper: 120s  # 假设上限为 2 分钟
-      step: 10    # 假设每次变化步长为 10 秒
-    peer_gossip_pvtData_transientstoreMaxBlockRetention:
-      lower: 500   # 假设下限为 500
-      upper: 2000  # 假设上限为 2000
-      step: 100    # 假设每次变化步长为 100
-    peer_gossip_pvtData_pushAckTimeout:
-      lower: 1s    # 假设下限为 1 秒
-      upper: 5s    # 假设上限为 5 秒
-      step: 1     # 假设每次变化步长为 1 秒
-    peer_gossip_pvtData_btlPullMargin:
-      lower: 5     # 假设下限为 5
-      upper: 15    # 假设上限为 15
-      step: 1      # 假设每次变化步长为 1
-    peer_gossip_pvtData_reconcileBatchSize:
-      lower: 5     # 假设下限为 5
-      upper: 15    # 假设上限为 15
-      step: 1      # 假设每次变化步长为 1
-    peer_gossip_pvtData_reconcileSleepInterval:
-      lower: 30s   # 假设下限为 30 秒
-      upper: 120s  # 假设上限为 2 分钟
-      step: 10    # 假设每次变化步长为 10 秒
-    peer_gossip_state_checkInterval:
-      lower: 5s      # 假设下限为 5 秒
-      upper: 30s     # 假设上限为 30 秒
-      step: 5       # 假设每次变化步长为 5 秒
-    peer_gossip_state_responseTimeout:
-      lower: 1s      # 假设下限为 1 秒
-      upper: 5s      # 假设上限为 5 秒
-      step: 1       # 假设每次变化步长为 1 秒
-    peer_gossip_state_batchSize:
-      lower: 5       # 假设下限为 5
-      upper: 20      # 假设上限为 20
-      step: 5        # 假设每次变化步长为 5
-    peer_gossip_state_blockBufferSize:
-      lower: 10      # 假设下限为 10
-      upper: 30      # 假设上限为 30
-      step: 5        # 假设每次变化步长为 5
-    peer_gossip_state_maxRetries:
-      lower: 1       # 假设下限为 1
-      upper: 5       # 假设上限为 5
-      step: 1        # 假设每次变化步长为 1
-    peer_authentication_timewindow:
-      lower: 5m     # 假设下限为 5 分钟
-      upper: 30m    # 假设上限为 30 分钟
-      step: 5      # 假设每次变化步长为 5 分钟
-    peer_client_connTimeout:
-      lower: 1s    # 假设下限为 1 秒
-      upper: 5s    # 假设上限为 5 秒
-      step: 1     # 假设每次变化步长为 1 秒
-    peer_deliveryclient_reconnectTotalTimeThreshold:
-      lower: 1800s   # 假设下限为 1800 秒
-      upper: 7200s   # 假设上限为 7200 秒
-      step: 300     # 假设每次变化步长为 300 秒
-    peer_deliveryclient_connTimeout:
-      lower: 1s      # 假设下限为 1 秒
-      upper: 5s      # 假设上限为 5 秒
-      step: 1       # 假设每次变化步长为 1 秒
-    peer_deliveryclient_reConnectBackoffThreshold:
-      lower: 1800s   # 假设下限为 1800 秒
-      upper: 7200s   # 假设上限为 7200 秒
-      step: 300     # 假设每次变化步长为 300 秒
-    peer_discovery_authCacheMaxSize:
-      lower: 500    # 假设下限为 500
-      upper: 2000   # 假设上限为 2000
-      step: 100     # 假设每次变化步长为 100
+#    peer_gossip_membershipTrackerInterval:
+#      lower: 1s      # 假设下限为 1 秒
+#      upper: 10s     # 假设上限为 10 秒
+#      step: 1       # 假设每次变化步长为 1 秒
+#    peer_gossip_maxBlockCountToStore:
+#      lower: 5   # 假设下限为 5
+#      upper: 20  # 假设上限为 20
+#      step: 5    # 假设每次变化步长为 5
+#    peer_gossip_maxPropagationBurstLatency:
+#      lower: 1ms   # 假设下限为 1ms
+#      upper: 50ms  # 假设上限为 50ms
+#      step: 10    # 假设每次变化步长为 5ms
+#    peer_gossip_maxPropagationBurstSize:
+#      lower: 5   # 假设下限为 5
+#      upper: 20  # 假设上限为 20
+#      step: 5    # 假设每次变化步长为 5
+#    peer_gossip_propagateIterations:
+#      lower: 1   # 假设下限为 1
+#      upper: 5   # 假设上限为 5
+#      step: 1    # 假设每次变化步长为 1
+#    peer_gossip_propagatePeerNum:
+#      lower: 1   # 假设下限为 1
+#      upper: 5   # 假设上限为 5
+#      step: 1    # 假设每次变化步长为 1
+#    peer_gossip_pullInterval:
+#      lower: 1s    # 假设下限为 1 秒
+#      upper: 10s   # 假设上限为 10 秒
+#      step: 2     # 假设每次变化步长为 1 秒
+
+#    改过
+#    peer_gossip_pullPeerNum:
+#      lower: 4     # 假设下限为 1
+#      upper: 5     # 假设上限为 5
+#      step: 1      # 假设每次变化步长为 1
+#    peer_gossip_requestStateInfoInterval:
+#      lower: 1s    # 假设下限为 1 秒
+#      upper: 10s   # 假设上限为 10 秒
+#      step: 2     # 假设每次变化步长为 1 秒
+#    peer_gossip_publishStateInfoInterval:
+#      lower: 1s    # 假设下限为 1 秒
+#      upper: 10s   # 假设上限为 10 秒
+#      step: 2     # 假设每次变化步长为 1 秒
+#    peer_gossip_publishCertPeriod:
+#      lower: 5s    # 假设下限为 5 秒
+#      upper: 30s   # 假设上限为 30 秒
+#      step: 10     # 假设每次变化步长为 5 秒
+#    peer_gossip_dialTimeout:
+#      lower: 1s    # 假设下限为 1 秒
+#      upper: 10s   # 假设上限为 10 秒
+#      step: 2     # 假设每次变化步长为 1 秒
+#    peer_gossip_connTimeout:
+#      lower: 1s    # 假设下限为 1 秒
+#      upper: 10s   # 假设上限为 10 秒
+#      step: 2     # 假设每次变化步长为 1 秒
+#    peer_gossip_recvBuffSize:
+#      lower: 10    # 假设下限为 10
+#      upper: 100   # 假设上限为 100
+#      step: 20     # 假设每次变化步长为 10
+#    peer_gossip_sendBuffSize:
+#      lower: 100   # 假设下限为 100
+#      upper: 500   # 假设上限为 500
+#      step: 100     # 假设每次变化步长为 50
+#    peer_gossip_digestWaitTime:
+#      lower: 500ms   # 假设下限为 500 毫秒
+#      upper: 2000ms      # 假设上限为 2 秒
+#      step: 500    # 假设每次变化步长为 100 毫秒
+#    peer_gossip_requestWaitTime:
+#      lower: 1000ms  # 假设下限为 1000 毫秒
+#      upper: 3000ms      # 假设上限为 3 秒
+#      step: 1000    # 假设每次变化步长为 200 毫秒
+#    peer_gossip_responseWaitTime:
+#      lower: 1s    # 假设下限为 1 秒
+#      upper: 5s    # 假设上限为 5 秒
+#      step: 1     # 假设每次变化步长为 1 秒
+#    peer_gossip_aliveTimeInterval:
+#      lower: 1s    # 假设下限为 1 秒
+#      upper: 10s   # 假设上限为 10 秒
+#      step: 2     # 假设每次变化步长为 1 秒
+#    peer_gossip_aliveExpirationTimeout:
+#      lower: 10s   # 假设下限为 10 秒
+#      upper: 30s   # 假设上限为 30 秒
+#      step: 10     # 假设每次变化步长为 5 秒
+#    peer_gossip_reconnectInterval:
+#      lower: 10s   # 假设下限为 10 秒
+#      upper: 60s   # 假设上限为 60 秒
+#      step: 10    # 假设每次变化步长为 10 秒
+#    peer_gossip_election_startupGracePeriod:
+#      lower: 10s   # 假设下限为 10 秒
+#      upper: 30s   # 假设上限为 30 秒
+#      step: 10     # 假设每次变化步长为 5 秒
+#    peer_gossip_election_membershipSampleInterval:
+#      lower: 500ms  # 假设下限为 500 毫秒
+#      upper: 2000ms     # 假设上限为 2 秒
+#      step: 500   # 假设每次变化步长为 100 毫秒
+#    peer_gossip_election_leaderAliveThreshold:
+#      lower: 5s    # 假设下限为 5 秒
+#      upper: 15s   # 假设上限为 15 秒
+#      step: 5     # 假设每次变化步长为 5 秒
+#    peer_gossip_election_leaderElectionDuration:
+#      lower: 2s    # 假设下限为 2 秒
+#      upper: 8s    # 假设上限为 8 秒
+#      step: 2     # 假设每次变化步长为 2 秒
+#    peer_gossip_pvtData_pullRetryThreshold:
+#      lower: 30s   # 假设下限为 30 秒
+#      upper: 120s  # 假设上限为 2 分钟
+#      step: 10    # 假设每次变化步长为 10 秒
+#    peer_gossip_pvtData_transientstoreMaxBlockRetention:
+#      lower: 500   # 假设下限为 500
+#      upper: 2000  # 假设上限为 2000
+#      step: 100    # 假设每次变化步长为 100
+#    peer_gossip_pvtData_pushAckTimeout:
+#      lower: 1s    # 假设下限为 1 秒
+#      upper: 5s    # 假设上限为 5 秒
+#      step: 1     # 假设每次变化步长为 1 秒
+#    peer_gossip_pvtData_btlPullMargin:
+#      lower: 5     # 假设下限为 5
+#      upper: 15    # 假设上限为 15
+#      step: 1      # 假设每次变化步长为 1
+#    peer_gossip_pvtData_reconcileBatchSize:
+#      lower: 5     # 假设下限为 5
+#      upper: 15    # 假设上限为 15
+#      step: 1      # 假设每次变化步长为 1
+#    peer_gossip_pvtData_reconcileSleepInterval:
+#      lower: 30s   # 假设下限为 30 秒
+#      upper: 120s  # 假设上限为 2 分钟
+#      step: 10    # 假设每次变化步长为 10 秒
+#    peer_gossip_state_checkInterval:
+#      lower: 5s      # 假设下限为 5 秒
+#      upper: 30s     # 假设上限为 30 秒
+#      step: 5       # 假设每次变化步长为 5 秒
+#    peer_gossip_state_responseTimeout:
+#      lower: 1s      # 假设下限为 1 秒
+#      upper: 5s      # 假设上限为 5 秒
+#      step: 1       # 假设每次变化步长为 1 秒
+#    peer_gossip_state_batchSize:
+#      lower: 5       # 假设下限为 5
+#      upper: 20      # 假设上限为 20
+#      step: 5        # 假设每次变化步长为 5
+#    peer_gossip_state_blockBufferSize:
+#      lower: 10      # 假设下限为 10
+#      upper: 30      # 假设上限为 30
+#      step: 5        # 假设每次变化步长为 5
+#    peer_gossip_state_maxRetries:
+#      lower: 1       # 假设下限为 1
+#      upper: 5       # 假设上限为 5
+#      step: 1        # 假设每次变化步长为 1
+#    peer_authentication_timewindow:
+#      lower: 5m     # 假设下限为 5 分钟
+#      upper: 30m    # 假设上限为 30 分钟
+#      step: 5      # 假设每次变化步长为 5 分钟
+#    peer_client_connTimeout:
+#      lower: 1s    # 假设下限为 1 秒
+#      upper: 5s    # 假设上限为 5 秒
+#      step: 1     # 假设每次变化步长为 1 秒
+#    peer_deliveryclient_reconnectTotalTimeThreshold:
+#      lower: 1800s   # 假设下限为 1800 秒
+#      upper: 7200s   # 假设上限为 7200 秒
+#      step: 300     # 假设每次变化步长为 300 秒
+#    peer_deliveryclient_connTimeout:
+#      lower: 1s      # 假设下限为 1 秒
+#      upper: 5s      # 假设上限为 5 秒
+#      step: 1       # 假设每次变化步长为 1 秒
+#    peer_deliveryclient_reConnectBackoffThreshold:
+#      lower: 1800s   # 假设下限为 1800 秒
+#      upper: 7200s   # 假设上限为 7200 秒
+#      step: 300     # 假设每次变化步长为 300 秒
+#    peer_discovery_authCacheMaxSize:
+#      lower: 500    # 假设下限为 500
+#      upper: 2000   # 假设上限为 2000
+#      step: 100     # 假设每次变化步长为 100
     peer_discovery_authCachePurgeRetentionRatio:
       lower: 0.5    # 假设下限为 0.5
       upper: 0.9    # 假设上限为 0.9
-      step: 0.05    # 假设每次变化步长为 0.05
+      step: 0.1    # 假设每次变化步长为 0.05
