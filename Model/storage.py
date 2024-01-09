@@ -103,7 +103,7 @@ def update_resource_monitor(mysql_connect):
             if metric is None or metric == '' or prometheus_query is None or prometheus_query == '':
                 metric = prev_metric if metric == '' or metric is None else metric
                 prometheus_query = prev_prometheus_query if prometheus_query == '' or prometheus_query is None else prometheus_query
-                cursor.execute("UPDATE resource_monitor_copy2 SET metric = %s, prometheus_query = %s WHERE id = %s",
+                cursor.execute("UPDATE resource_monitor SET metric = %s, prometheus_query = %s WHERE id = %s",
                                (metric, prometheus_query, id_val))
             prev_metric = metric
             prev_prometheus_query = prometheus_query

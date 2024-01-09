@@ -1,10 +1,15 @@
+import logging
+import time
+
 import pandas as pd
 import torch
 from sklearn.preprocessing import MinMaxScaler
 from torch import nn, optim
 
 from Model import initialize, storage, param_identification, performance_analyze
-from Model.mutil_layer_prediction_model import RegressionModel, CustomLoss, train_and_predict_with_metrics
+from Model.mutil_layer_prediction_model import RegressionModel, CustomLoss, train_and_predict_with_metrics, \
+    SLRegressionModel, MAELoss
+from Model.performance_analyze import get_dataset_lasso, calculate_weight
 
 if __name__ == "__main__":
     configParameters = initialize.read_yaml_config('../Benchmark-Deploy-Tool/config.yaml')
@@ -13,6 +18,9 @@ if __name__ == "__main__":
                                                         configParameters['Database']['Mysql']['User'],
                                                         configParameters['Database']['Mysql']['Password'],
                                                         configParameters['Database']['Mysql']['Database'])
+
+    # get_dataset_lasso(engine)
+
     # parameter_data, parameter_rows = storage.query_config_parameter_by_table(mysql_connection)
     # performance_data, performance_rows = storage.query_performance_metric_by_table(mysql_connection)
     # param_identification.lasso_test(parameter_rows, performance_rows)
@@ -34,9 +42,13 @@ if __name__ == "__main__":
     # print(weight)
     # param_identification.lasso_test(parameter_rows, performance_rows)
 
+
+
+    # train model
     df = pd.read_sql('dataset', con=engine)
-    bench_config = pd.get_dummies(df, columns=['bench_config'])[['bench_config_create', 'bench_config_modify', 'bench_config_open',
-                                                                 'bench_config_query', 'bench_config_transfer']].astype(int)
+    df = df[~df['bench_config'].isin(['query'])]
+    # bench_config = pd.get_dummies(df, columns=['bench_config'])[['bench_config_create', 'bench_config_modify', 'bench_config_open',
+    #                                                              'bench_config_query', 'bench_config_transfer']].astype(int)
     peer_config = df[
         ['peer_gossip_dialTimeout', 'peer_gossip_aliveTimeInterval', 'peer_deliveryclient_reConnectBackoffThreshold',
          'peer_gossip_publishCertPeriod',
@@ -60,40 +72,67 @@ if __name__ == "__main__":
     # print(mse_xgb, r2_xgb, mse_svr, r2_svr)
 
     # nn
-    model = RegressionModel()
+    model = SLRegressionModel()
     # custom_criterion = CustomLoss()
     optimizer = optim.SGD(model.parameters(), lr=0.01)
     # optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
     # target_df = metric[['throughput', 'avg_latency', 'error_rate', 'disc_write']]
-    target_df = metric[['throughput']]
+
+    # performance_df = df[['avg_latency', 'throughput', 'error_rate', 'disc_write']]
+    # weight = calculate_weight(performance_df)
+
+    # target_df = metric['throughput'] * weight['throughput'] + metric['avg_latency'] * weight['avg_latency'] + \
+    #     metric['error_rate'] * weight['error_rate'] + metric['disc_write'] * weight['disc_write']
+    # target_df = target_df.to_frame()
+    target_df_prev = metric[['avg_latency']]
 
     # scaler = MinMaxScaler()
     # target_normalized = scaler.fit_transform(target_df)
     # target_tensor = torch.tensor(target_normalized).float()
 
-    target_tensor = torch.tensor(target_df.values).float()
+    target_tensor = torch.tensor(target_df_prev.values).float()
     # target_tensor = torch.log1p(target_tensor)
+    logging.basicConfig(filename='./log/slbpnn_avg_latency_rmse.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
     threshold_loss = 100
+    start_time = time.time()
+    repeat_times = 0
+    last_loss = 0
     for epoch in range(1000000000000000000):
         optimizer.zero_grad()
-        output = model(peer_config, orderer_config, metric, bench_config)
+        output = model(peer_config, orderer_config, metric)
         # custom_loss = custom_criterion(output, target_tensor, loss_hidden1, loss_hidden2, loss_hidden3)
         criterion = nn.MSELoss()
-
+        # criterion = MAELoss()
+        # criterion = nn.L1Loss()
         # output_array = output.detach().numpy()
         # output_normalized = scaler.fit_transform(output_array)
         # output_tensor = torch.tensor(output_normalized).float()
 
         # mse_loss = criterion(torch.expm1(output), torch.expm1(target_tensor))
-        mse_loss = criterion(output, target_tensor)
-
+        loss = criterion(output, target_tensor)
+        loss = torch.sqrt(loss)
+        # loss = criterion(output, target_tensor)
         # total_loss = mse_loss + custom_loss
-        mse_loss.backward()
+        # rmse_loss.backward()
+        loss.backward()
+        # mae_loss
         optimizer.step()
         if (epoch + 1) % 100 == 0:
             print(
                 # f"Epoch {epoch + 1}: MSE Loss: {mse_loss.item()}, Custom Loss: {custom_loss.item()}, Total Loss: {total_loss.item()}")
-                f"Epoch {epoch + 1}: MSE Loss: {mse_loss.item()}")
-        # if mse_loss.item() <= 30:
+                f"Epoch {epoch + 1}: RMSE Loss: {loss.item()}")
+        # if mse_loss.item() <= 20:
+        #     torch.save(model.state_dict(), './bpnn/bpnn_param.pth')
+        #     torch.save(model, './bpnn/bpnn_model.pth')
         #     break
+        if last_loss == loss.item():
+            repeat_times += 1
+        last_loss = loss.item()
+        if loss.item() <= 100:
+            end_time = time.time()
+            elapsed_time = end_time - start_time
+            logging.info(f'SLBPNN Epoch {epoch}: RMSE Loss: {loss.item()}')
+            logging.info(f"SLBPNN Train Time: {elapsed_time}")
+        if repeat_times == 5:
+            break

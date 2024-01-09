@@ -65,9 +65,9 @@ def plot_tps_by_custom_id(mysql_connect):
         cursor.close()
 
 
-def aggregate_monitor_metric(mysql_connect):
+def aggregate_monitor_metric(mysql_connection):
     try:
-        cursor = mysql_connect.cursor()
+        cursor = mysql_connection.cursor()
         # 按metric属性分组，再在每个分组内，针对name属性以order, peer开头的行计算平均值
         query = ("""
             INSERT INTO resource_monitor_copy2_aggregated (performance_id, metric, prometheus_query, name, avg_value, stage)
@@ -84,7 +84,7 @@ def aggregate_monitor_metric(mysql_connect):
             GROUP BY metric, performance_id
         """)
         cursor.execute(query)
-        mysql_connect.commit()
+        mysql_connection.commit()
 
         print("Data aggregated and written to resource_monitor_copy2 successfully.")
 
@@ -185,9 +185,9 @@ def aggregated_lasso_dataset(mysql_connect, engine):
         dataset.rename(columns={'id': 'config_id'}, inplace=True)
         # dataset.drop(columns=['performance_id'])
         dataset.dropna(subset=['config_id', 'performance_id'], inplace=True)
-        dataset.to_sql('dataset', con=engine, if_exists='append', index=False)
+        dataset.to_sql('dataset_copy1', con=engine, if_exists='append', index=False)
         mysql_connect.commit()
-        print("Data aggregated and written to resource_monitor_copy2 successfully.")
+        print("Data aggregated and written to dataset_copy1 successfully.")
         # return dataset
 
     # except Exception as e:
@@ -217,7 +217,8 @@ def calculate_weight(df):
 
 def get_dataset_lasso(engine):
     df = pd.read_sql('dataset', con=engine)
-    df = df.drop(columns=['id', 'performance_id', 'config_id', 'stage', 'config_id'])
+    df = df.drop(columns=['id', 'performance_id', 'config_id', 'stage', 'config_id', 'broadcast_enqueue_duration', 'blockcutter_block_fill_duration',
+                          'broadcast_validate_duration', 'gossip_state_commit_duration'])
     performance_df = df[['avg_latency', 'throughput', 'error_rate', 'disc_write']]
     config_df = df.drop(performance_df.columns, axis=1)
     weight = calculate_weight(performance_df)

@@ -62,9 +62,11 @@ def lasso_test(parameter_rows, performance_rows, weight):
     scaler = StandardScaler()
     tx_write_df_sc = scaler.fit_transform(tx_write_df)
     tx_write_df_sc = pd.DataFrame(tx_write_df_sc, columns=tx_write_df.columns)
-    y = tx_write_df_sc['throughput'] * weight['throughput'] + tx_write_df_sc['avg_latency'] * weight['avg_latency'] + tx_write_df_sc['error_rate'] * weight['error_rate'] + tx_write_df_sc['disc_write'] * weight['disc_write']
+    y = tx_write_df_sc['throughput'] * weight['throughput'] + tx_write_df_sc['avg_latency'] * weight['avg_latency'] + \
+        tx_write_df_sc['error_rate'] * weight['error_rate'] + tx_write_df_sc['disc_write'] * weight['disc_write']
     # y = tx_write_df_sc['throughput']
-    X = tx_write_df_sc.drop(['throughput', 'avg_latency', 'error_rate', 'disc_write'], axis=1)  # be careful inplace=False
+    X = tx_write_df_sc.drop(['throughput', 'avg_latency', 'error_rate', 'disc_write'],
+                            axis=1)  # be careful inplace=False
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
     alpha_lasso = 10 ** np.linspace(-3, 1, 500)
     lasso = Lasso()
@@ -75,17 +77,6 @@ def lasso_test(parameter_rows, performance_rows, weight):
         lasso.fit(X_train, y_train)
         coefs_lasso.append(lasso.coef_)
 
-    plt.figure(figsize=(12, 10))
-    ax = plt.gca()
-    ax.plot(alpha_lasso, coefs_lasso)
-    ax.set_xscale('log')
-    plt.axis('tight')
-    plt.xlabel('alpha')
-    plt.ylabel('weights: scaled coefficients')
-    plt.title('Lasso regression coefficients Vs. alpha')
-    # plt.legend(df.drop('throughput', axis=1, inplace=False).columns)
-    plt.show()
-
     lasso = Lasso(alpha=10 ** (-2))
     model_lasso = lasso.fit(X_train, y_train)
     coef = pd.Series(model_lasso.coef_, index=X_train.columns)
@@ -95,8 +86,28 @@ def lasso_test(parameter_rows, performance_rows, weight):
     a['feature'] = fea
     a['importance'] = coef.values
 
-    a = a.sort_values('importance', ascending=False)
+    a = a.sort_values('importance', ascending=False, key=abs)
+    top_20_features = a.head(13)  # 仅保留前20个重要的属性
+
     plt.figure(figsize=(12, 8))
-    plt.barh(a['feature'], a['importance'])
-    plt.title('the importance features')
+    bars = plt.barh(top_20_features['feature'], top_20_features['importance'])
+    plt.title('Top 20 Important Features')
+    plt.xlabel('Importance')
+    plt.ylabel('Features')
+
+    for bar, imp in zip(bars, top_20_features['importance']):
+        plt.text(imp, bar.get_y() + bar.get_height() / 2, f'{imp:.3f}', ha='left', va='center')
+
+    plt.show()
+
+    plt.figure(figsize=(12, 10))
+    ax = plt.gca()
+    ax.plot(alpha_lasso, coefs_lasso)
+    ax.set_xscale('log')
+    plt.axis('tight')
+    plt.xlabel('alpha')
+    plt.ylabel('weights: scaled coefficients')
+    plt.title('Lasso regression coefficients Vs. alpha')
+
+    plt.legend(top_20_features['feature'])
     plt.show()

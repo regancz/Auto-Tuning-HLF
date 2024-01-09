@@ -1,8 +1,17 @@
 import datetime
 import logging
 import re
+import uuid
+
+import numpy as np
 import paramiko
 import main
+
+from helper import convert_to_number
+from deploy_caliper import run_caliper_and_log, mv_report_and_log
+from config import modify_param_yaml, get_config, modify_connection_yaml
+from initialize import read_yaml_config
+from storage import insert_config_to_database, get_metrics
 
 
 def run_command_and_log(ssh_client, commands, log_prefix):
@@ -55,3 +64,66 @@ def deploy_fabric_and_log(ssh_client, cc_name):
 def remove_ansi_escape_codes(text):
     ansi_escape = re.compile(r'\x1B[@-_][0-?]*[ -/]*[@-~]')
     return ansi_escape.sub('', text)
+
+
+def run_fabric(ssh_client, mysql_connection, config_parameters, mode, param_type):
+    if mode == 'default':
+        config_id = str(uuid.uuid1())
+        run_fabric_default(ssh_client, mysql_connection, config_parameters, config_id)
+    elif mode == 'benchmark':
+        if param_type == 'Orderer':
+            run_fabric_benchmark(ssh_client, mysql_connection, config_parameters, 'Orderer')
+        elif param_type == 'Configtx':
+            run_fabric_benchmark(ssh_client, mysql_connection, config_parameters, 'Configtx')
+        elif param_type == 'Peer':
+            run_fabric_benchmark(ssh_client, mysql_connection, config_parameters, 'Peer')
+        elif param_type == 'BftConfigtx':
+            run_fabric_benchmark(ssh_client, mysql_connection, config_parameters, 'BftConfigtx')
+        elif param_type == 'all':
+            run_fabric_benchmark(ssh_client, mysql_connection, config_parameters, 'Orderer')
+            run_fabric_benchmark(ssh_client, mysql_connection, config_parameters, 'Configtx')
+            run_fabric_benchmark(ssh_client, mysql_connection, config_parameters, 'Peer')
+            run_fabric_benchmark(ssh_client, mysql_connection, config_parameters, 'BftConfigtx')
+        else:
+            print('run_fabric incorrect param_type')
+
+
+def run_fabric_default(ssh_client, mysql_connection, config_parameters, config_id):
+    updates_connection_org1 = {
+        'peers-peer0.org1.example.com-url': 'grpcs://192.168.3.39:7051',
+        'certificateAuthorities-ca.org1.example.com-url': 'https://192.168.3.39:7054',
+    }
+    cc_names = ['simple', 'smallbank']
+    for cc_name in cc_names:
+        performance_id = str(uuid.uuid1())
+        deploy_fabric_and_log(ssh_client, cc_name)
+        modify_connection_yaml(ssh_client, config_parameters['ConfigPath']['ConnectionOrg1'],
+                               updates_connection_org1)
+        run_caliper_and_log(ssh_client, cc_name)
+        order_param = get_config(ssh_client, config_parameters['ConfigPath']['Orderer'],
+                                 config_parameters['Parameters']['Orderer'])
+        configtx_param = get_config(ssh_client, config_parameters['ConfigPath']['Configtx'],
+                                    config_parameters['Parameters']['Configtx'])
+        peer_param = get_config(ssh_client, config_parameters['ConfigPath']['Peer'],
+                                config_parameters['Parameters']['Peer'])
+        insert_config_to_database(mysql_connection, order_param, configtx_param, peer_param,
+                                  config_id)
+        get_metrics(mysql_connection, ssh_client, config_id, performance_id)
+        mv_report_and_log(ssh_client, config_id, f'{performance_id}_{cc_name}')
+        break
+
+
+def run_fabric_benchmark(ssh_client, mysql_connection, config_parameters, param_type):
+    param_range = read_yaml_config('param_range.yaml')
+    for k, v in param_range['Parameters'][param_type].items():
+        lower = v['lower']
+        upper = v['upper']
+        step = v['step']
+        lower_value, unit = convert_to_number(str(lower))
+        upper_value, unit = convert_to_number(str(upper))
+        for i in np.arange(lower_value, upper_value + 1, step):
+            new_value = (str(i) + unit) if unit else str(i)
+            updates = {k: new_value}
+            config_id = str(uuid.uuid1())
+            modify_param_yaml(ssh_client, config_parameters['ConfigPath'][param_type], updates)
+            run_fabric_default(ssh_client, mysql_connection, config_parameters, config_id)
