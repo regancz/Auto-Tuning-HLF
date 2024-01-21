@@ -11,7 +11,7 @@ from Model.mutil_layer_prediction_model import RegressionModel, CustomLoss, trai
 from Model.performance_analyze import get_dataset_lasso, calculate_weight
 
 if __name__ == "__main__":
-    configParameters = initialize.read_yaml_config('../Benchmark-Deploy-Tool/config.yaml')
+    configParameters = initialize.read_yaml_config('../Benchmark_Deploy_Tool/config.yaml')
     mysql_connection, engine = initialize.mysql_connect(configParameters['Database']['Mysql']['Host'],
                                                         configParameters['Database']['Mysql']['Port'],
                                                         configParameters['Database']['Mysql']['User'],
@@ -45,7 +45,11 @@ if __name__ == "__main__":
 
     # train model
     df = pd.read_sql('dataset', con=engine)
-    df = df[~df['bench_config'].isin(['query'])]
+    # df = df[~df['bench_config'].isin(['query'])]
+    # create & modify & query & open & query & transfer
+    payload_method = 'transfer'
+    target_col = 'disc_write'
+    df = df[df['bench_config'].isin([payload_method])]
     # bench_config = pd.get_dummies(df, columns=['bench_config'])[['bench_config_create', 'bench_config_modify', 'bench_config_open',
     #                                                              'bench_config_query', 'bench_config_transfer']].astype(int)
     peer_config = df[
@@ -66,10 +70,6 @@ if __name__ == "__main__":
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    # xgboost
-    # mse_xgb, r2_xgb, mse_svr, r2_svr = train_and_predict_with_metrics(peer_config, orderer_config, metric)
-    # print(mse_xgb, r2_xgb, mse_svr, r2_svr)
-
     # nn
     model = RegressionModel()
     # custom_criterion = CustomLoss()
@@ -83,7 +83,7 @@ if __name__ == "__main__":
     # target_df = metric['throughput'] * weight['throughput'] + metric['avg_latency'] * weight['avg_latency'] + \
     #     metric['error_rate'] * weight['error_rate'] + metric['disc_write'] * weight['disc_write']
     # target_df = target_df.to_frame()
-    target_col = 'throughput'
+
     target_df_prev = metric[[target_col]]
 
     # scaler = MinMaxScaler()
@@ -132,7 +132,7 @@ if __name__ == "__main__":
         #     print(f'proposed Model Epoch {epoch}: MAE Loss: {loss.item()}')
         #     logging.info(f"proposed Model Train Time: {elapsed_time}")
         if repeat_times == 5:
-            torch.save(model.state_dict(), f'./bpnn/bpnn_{target_col}.pth')
+            torch.save(model.state_dict(), f'./bpnn/bpnn_{payload_method}_{target_col}.pth')
             # torch.save(model, f'./bpnn/bpnn_{target_col}.pth')
             break
-    torch.save(model.state_dict(), f'./bpnn/bpnn_{target_col}.pth')
+    torch.save(model.state_dict(), f'./bpnn/bpnn_{payload_method}_{target_col}.pth')

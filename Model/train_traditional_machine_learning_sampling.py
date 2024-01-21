@@ -12,7 +12,7 @@ from Model.mutil_layer_prediction_model import RegressionModel, CustomLoss, trai
 from Model.performance_analyze import get_dataset_lasso, calculate_weight
 
 if __name__ == "__main__":
-    configParameters = initialize.read_yaml_config('../Benchmark-Deploy-Tool/config.yaml')
+    configParameters = initialize.read_yaml_config('../Benchmark_Deploy_Tool/config.yaml')
     mysql_connection, engine = initialize.mysql_connect(configParameters['Database']['Mysql']['Host'],
                                                         configParameters['Database']['Mysql']['Port'],
                                                         configParameters['Database']['Mysql']['User'],

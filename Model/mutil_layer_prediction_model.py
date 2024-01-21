@@ -15,7 +15,7 @@ from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from sklearn.svm import SVR
 from torch import optim
 from xgboost import XGBRegressor
-
+from tqdm import tqdm
 
 class MAELoss(nn.Module):
     def __init__(self):
@@ -169,13 +169,14 @@ class SLRegressionModel(nn.Module):
         return output
 
 
-def train_and_predict_with_metrics(peer_config, orderer_config, metric, weight):
+def train_and_predict_with_metrics(peer_config, orderer_config, metric, weight, payload_function):
     # 选择特征和目标列
     # features = pd.concat([peer_config, orderer_config, metric[['gossip_state_commit_duration',
     #                                                            'broadcast_validate_duration',
     #                                                            'blockcutter_block_fill_duration',
     #                                                            'broadcast_enqueue_duration']]], axis=1)
-    features = pd.concat([peer_config, orderer_config], axis=1)
+    # features = pd.concat([peer_config, orderer_config], axis=1)
+    features = orderer_config[['Orderer_BatchSize_PreferredMaxBytes', 'Orderer_BatchSize_MaxMessageCount']]
     for target_col in ['throughput', 'avg_latency', 'disc_write']:
         target = metric[target_col]
         X_train, X_test, y_train, y_test = train_test_split(features, target, test_size=0.2, random_state=42)
@@ -200,9 +201,9 @@ def train_and_predict_with_metrics(peer_config, orderer_config, metric, weight):
                     # 这是生成的最大树的数目，也是最大的迭代次数。
                     'n_estimators': [50, 100, 150, 200],
                     # 0.5-1，0.5代表平均采样，防止过拟合. 范围: (0,1]，注意不可取0
-                    'subsample': [0.3, 0.6, 0.8, 0.9, 1.0],
+                    # 'subsample': [0.3, 0.6, 0.8, 0.9, 1.0],
                     # 用来控制每棵随机采样的列数的占比(每一列是一个特征) 典型值：0.5-1范围: (0,1]
-                    'colsample_bytree': [0.3, 0.5, 0.8],
+                    # 'colsample_bytree': [0.3, 0.5, 0.8],
                     # 'gamma': [0, 0.1, 0.2],
                     # 'reg_lambda': [1, 1.5, 2],
                     # 'reg_alpha': [0, 0.1, 0.5],
@@ -252,7 +253,8 @@ def train_and_predict_with_metrics(peer_config, orderer_config, metric, weight):
             best_model = grid.best_estimator_
             predictions = best_model.predict(X_test_scaled)
             # transform_predictions = y_train_scaler.inverse_transform(predictions.reshape(-1, 1))
-            joblib.dump(best_model, f'./traditional_model/{name}/{target_col}_best_model.pkl')
+            joblib.dump(best_model,
+                        f'./traditional_model/{name}/{target_col}_{payload_function}_2metric_best_model.pkl')
             mae = mean_absolute_error(y_test, predictions)
             rmse = np.sqrt(mean_squared_error(y_test, predictions))
             print(f"Model: {name} {target_col}")
@@ -261,6 +263,7 @@ def train_and_predict_with_metrics(peer_config, orderer_config, metric, weight):
             print(f"RMSE: {rmse}")
             print(f"Train Time: {elapsed_time}")
             print("")
+            # break
     return  # 返回其它结果（这里你可以补充其他返回结果）
 
 
@@ -410,19 +413,144 @@ def train_bpnn_for_sampling(df, data_size, target_col):
     logger.addHandler(file_handler)
     repeat_times = 0
     last_loss = 0
+    optimizer.zero_grad()
     for epoch in range(5000):
-        optimizer.zero_grad()
         output = model(peer_config, orderer_config, metric)
         criterion = MAELoss()
         loss = criterion(output, target_tensor)
         loss.backward()
         optimizer.step()
-        total_cost = 2*data_size + 5000*loss.item()
+        total_cost = 2 * data_size + 5000 * loss.item()
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
         if (epoch + 1) % 100 == 0:
-            logger.info(f"{timestamp} Epoch {epoch + 1} Metric: {target_col} DataSize: {data_size} Error: {loss.item()} TotalCost: {total_cost}")
+            logger.info(
+                f"{timestamp} Epoch {epoch + 1} Metric: {target_col} DataSize: {data_size} Error: {loss.item()} TotalCost: {total_cost}")
         if last_loss == loss.item():
             repeat_times += 1
         last_loss = loss.item()
         if repeat_times == 5:
             break
+
+
+def train_boost_2metric(df, cc_name, name, model, param_grid):
+    # df = df[df['bench_config'].isin([cc_name])]
+    df = df[(df['blockcutter_block_fill_duration'] != 0) & ~df['blockcutter_block_fill_duration'].isna()]
+    # 在DataFrame中对列进行归一化
+    df = normalize_column(df.copy(), 'Orderer_BatchSize_PreferredMaxBytes', 1, 20)
+    df = normalize_column(df.copy(), 'Orderer_BatchSize_MaxMessageCount', 1, 20)
+
+    orderer_config = df[
+        [
+            'Orderer_BatchSize_PreferredMaxBytes_normalized',
+            'Orderer_BatchSize_MaxMessageCount_normalized',
+            # 'Orderer_BatchSize_PreferredMaxBytes',
+            # 'Orderer_BatchSize_MaxMessageCount',
+            # 'Orderer_General_Authentication_TimeWindow',
+            # 'Orderer_General_Keepalive_ServerInterval',
+            # 'Orderer_BatchSize_AbsoluteMaxBytes'
+        ]]
+
+    metric = df[['throughput', 'avg_latency', 'disc_write', 'error_rate', 'blockcutter_block_fill_duration']]
+    # model = XGBRegressor()
+    # param_grid = {
+    #     'learning_rate': [2],
+    #     'max_depth': [3],
+    #     'n_estimators': [200],
+    #     'subsample': [0.3],
+    #     'colsample_bytree': [0.3],
+    # }
+
+    # model = SVR()
+    # param_grid = {
+    #     'kernel': ['linear', 'rbf', 'poly'],
+    #     'gamma': [0.1, 0.2, 0.3],
+    #     'C': [0.1, 1, 10],
+    # }
+
+    # {'colsample_bytree': 0.3, 'learning_rate': 2, 'max_depth': 3, 'n_estimators': 200, 'subsample': 0.3}
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d")
+    log_prefix = 'boost_2metric'
+    log_file = f"F:/Project/PythonProject/Auto-Tuning-HLF/Model/log/spsa/{log_prefix}_{timestamp}.log"
+
+    logger = logging.getLogger(f'{log_prefix}_logger')
+    logger.setLevel(logging.INFO)
+    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+    file_handler = logging.FileHandler(log_file, encoding='utf-8')
+    file_handler.setFormatter(formatter)
+    logger.addHandler(file_handler)
+
+    features = orderer_config
+    for target_col in tqdm(['blockcutter_block_fill_duration']):
+        X_train, X_test, y_train, y_test = train_test_split(features, metric[target_col], test_size=0.2, random_state=42)
+        # x_scaler = MinMaxScaler()
+        # X_train_scaled = x_scaler.fit_transform(X_train)
+        # X_test_scaled = x_scaler.transform(X_test)
+
+        # normalized_value = normalize_value(x_value, x_min_original, x_max_original, a_target, b_target)
+        scoring = {'Error': make_scorer(mean_absolute_error)}
+        # model = None
+        # param_grid = {}
+        grid = GridSearchCV(model, param_grid, scoring=scoring, refit='Error', cv=5, verbose=2)
+        grid.fit(X_train, y_train.values)
+        best_params = grid.best_params_
+        best_model = grid.best_estimator_
+        predictions = best_model.predict(X_test)
+        # print(predictions)
+        joblib.dump(best_model, f'./traditional_model/spsa/{name}/{cc_name}_{target_col}_2metric_model.pkl')
+        # mae = mean_absolute_error(y_test / y_test, predictions / y_test)
+        mae = mean_absolute_error(y_test, predictions)
+        logger.info(f"Model: {name} Metric: {target_col}")
+        logger.info(f"Best parameters: {best_params}")
+        logger.info(f"Error: {mae}")
+
+
+def train_model_for_spsa(df, cc_name):
+    model_names = [
+        # 'XGBoost',
+        'SVR',
+        # 'AdaBoost',
+        # 'KNeighbors'
+    ]
+    for name in model_names:
+        if name == 'XGBoost':
+            model = XGBRegressor()
+            param_grid = {
+                'learning_rate': [0.1, 0.5, 1.2, 2],
+                'max_depth': [2, 3, 4],
+                'n_estimators': [150, 200],
+                'subsample': [0.3, 0.6, 0.8, 1.0],
+                'colsample_bytree': [0.3, 0.5, 0.8],
+            }
+            train_boost_2metric(df, cc_name=cc_name, model=model, param_grid=param_grid, name=name)
+        elif name == 'SVR':
+            model = SVR()
+            param_grid = {
+                'kernel': ['linear', 'rbf', 'poly'],
+                'gamma': [0.1, 0.2, 0.3],
+                'C': [0.1, 1, 10],
+            }
+            train_boost_2metric(df, cc_name=cc_name, model=model, param_grid=param_grid, name=name)
+        elif name == 'AdaBoost':
+            model = AdaBoostRegressor()
+            param_grid = {
+                'n_estimators': [50, 100, 150, 200],
+                'learning_rate': [0.1, 0.5, 0.8, 1.2, 2],
+            }
+            train_boost_2metric(df, cc_name=cc_name, model=model, param_grid=param_grid, name=name)
+        elif name == 'KNeighbors':
+            model = KNeighborsRegressor()
+            param_grid = {
+                'n_neighbors': [3, 5, 7, 9],
+                'weights': ['uniform', 'distance'],
+                'algorithm': ['auto', 'ball_tree', 'kd_tree', 'brute'],
+                'leaf_size': [20, 40, 50],
+            }
+            train_boost_2metric(df, cc_name=cc_name, model=model, param_grid=param_grid, name=name)
+    return
+
+
+def normalize_column(df, column_name, a, b):
+    x_min = df[column_name].min()
+    x_max = df[column_name].max()
+    df.loc[:, column_name + '_normalized'] = ((df[column_name] - x_min) * (b - a)) / (x_max - x_min) + a
+    return df

@@ -51,17 +51,19 @@ def insert_metric_to_database(performance_col, resource_col, connection, config_
     for col in performance_col:
         col.append(performance_id + '-' + str(idx))
         col.append(config_id)
+        print(f'config_id: {config_id} performance_metric: {performance_id}-{idx}')
     if resource_col:
         for col in resource_col:
             col.append(performance_id + '-' + str(idx))
 
     try:
         with connection.cursor() as cursor:
-            performance_metric_sql = "INSERT INTO performance_metric (bench_config, succ, fail, send_rate, max_latency, min_latency, avg_latency, throughput, id, config_id) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-            resource_monitor_sql = "INSERT INTO resource_monitor (metric, prometheus_query, name, value, performance_id) VALUES (%s, %s, %s, %s, %s)"
+            performance_metric_sql = "INSERT INTO performance_metric_spsa (bench_config, succ, fail, send_rate, max_latency, min_latency, avg_latency, throughput, id, config_id) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+            resource_monitor_sql = "INSERT INTO resource_monitor_spsa (metric, prometheus_query, name, value, performance_id) VALUES (%s, %s, %s, %s, %s)"
             for col in performance_col:
                 connection.ping(reconnect=True)
                 cursor.execute(performance_metric_sql, col)
+
             if resource_col:
                 for col in resource_col:
                     connection.ping(reconnect=True)
@@ -135,7 +137,7 @@ def insert_config_to_database(connection, order_param, configtx_param, peer_para
             elem) for elem in data]
     try:
         with connection.cursor() as cursor:
-            parameter_sql = "INSERT INTO config_parameter (Orderer_General_Authentication_TimeWindow, Orderer_General_Cluster_SendBufferSize, " \
+            parameter_sql = "INSERT INTO config_parameter_spsa (Orderer_General_Authentication_TimeWindow, Orderer_General_Cluster_SendBufferSize, " \
                                    "Orderer_General_Keepalive_ServerInterval, Orderer_General_Keepalive_ServerMinInterval, " \
                                    "Orderer_General_Keepalive_ServerTimeout, Metrics_Statsd_WriteInterval, Orderer_BatchTimeout, " \
                                    "Orderer_BatchSize_MaxMessageCount, Orderer_BatchSize_AbsoluteMaxBytes, Orderer_BatchSize_PreferredMaxBytes, " \
@@ -174,3 +176,26 @@ def insert_config_to_database(connection, order_param, configtx_param, peer_para
         print("could not close connection error pymysql %d: %s" % (e.args[0], e.args[1]))
     finally:
         print("insert_metric_to_database done")
+
+
+def query_metric_by_performance_id(connection, metric_name, performance_id):
+    # throughput
+    performance_id += '-0'
+    try:
+        with connection.cursor() as cursor:
+            connection.ping(reconnect=True)
+            query = f"SELECT {metric_name} FROM performance_metric_spsa WHERE id = %s"
+            # query = f"SELECT {columns_str} FROM config_parameter LIMIT 100"
+            cursor.execute(query, performance_id)
+            col_rows = cursor.fetchall()
+            metric_val = []
+            for d in col_rows:
+                for val in d.items():
+                    metric_val.append(val[1])
+        connection.commit()
+        return metric_val[0]
+    # except pymysql.Error as e:
+    #     print("could not close connection error pymysql %d: %s" % (e.args[0], e.args[1]))
+    finally:
+        print("insert_metric_to_database done")
+

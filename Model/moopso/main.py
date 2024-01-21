@@ -1,5 +1,4 @@
 # encoding: utf-8
-import numpy as np
 from Mopso import *
 import P_objective
 

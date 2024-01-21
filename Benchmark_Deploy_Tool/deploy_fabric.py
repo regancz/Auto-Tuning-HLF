@@ -5,13 +5,11 @@ import uuid
 
 import numpy as np
 import paramiko
-import main
 
-from helper import convert_to_number
-from deploy_caliper import run_caliper_and_log, mv_report_and_log
-from config import modify_param_yaml, get_config, modify_connection_yaml
-from initialize import read_yaml_config
-from storage import insert_config_to_database, get_metrics
+from Benchmark_Deploy_Tool.config import modify_connection_yaml, get_config, modify_param_yaml
+from Benchmark_Deploy_Tool.helper import convert_to_number
+from Benchmark_Deploy_Tool.initialize import read_yaml_config
+from Benchmark_Deploy_Tool.storage import insert_config_to_database, get_metrics
 
 
 def run_command_and_log(ssh_client, commands, log_prefix):
@@ -114,7 +112,8 @@ def run_fabric_default(ssh_client, mysql_connection, config_parameters, config_i
 
 
 def run_fabric_benchmark(ssh_client, mysql_connection, config_parameters, param_type):
-    param_range = read_yaml_config('param_range.yaml')
+    # F:\Project\PythonProject\Auto-Tuning-HLF\Benchmark_Deploy_Tool\param_range.yaml
+    param_range = read_yaml_config('F:/Project/PythonProject/Auto-Tuning-HLF/Benchmark_Deploy_Tool/param_range.yaml')
     for k, v in param_range['Parameters'][param_type].items():
         lower = v['lower']
         upper = v['upper']
@@ -122,8 +121,20 @@ def run_fabric_benchmark(ssh_client, mysql_connection, config_parameters, param_
         lower_value, unit = convert_to_number(str(lower))
         upper_value, unit = convert_to_number(str(upper))
         for i in np.arange(lower_value, upper_value + 1, step):
-            new_value = (str(i) + unit) if unit else str(i)
+            new_value = (str(i) + unit) if unit else int(i)
             updates = {k: new_value}
             config_id = str(uuid.uuid1())
             modify_param_yaml(ssh_client, config_parameters['ConfigPath'][param_type], updates)
             run_fabric_default(ssh_client, mysql_connection, config_parameters, config_id)
+
+
+def run_caliper_and_log(ssh_client, cc_name):
+    commands = ["cd /home/charles/Project/Blockchain/caliper-benchmarks && bash launch_" + cc_name + ".sh"]
+    run_command_and_log(ssh_client, commands, "caliper_log")
+
+
+def mv_report_and_log(ssh_client, config_id, performance_id):
+    commands = [
+        f"cp /home/charles/Project/Blockchain/report.html /home/charles/Project/Blockchain/caliper-benchmarks/report/report_{config_id}_{performance_id}.html"
+    ]
+    run_command_and_log(ssh_client, commands, "mv_report")

@@ -70,16 +70,16 @@ def aggregate_monitor_metric(mysql_connection):
         cursor = mysql_connection.cursor()
         # 按metric属性分组，再在每个分组内，针对name属性以order, peer开头的行计算平均值
         query = ("""
-            INSERT INTO resource_monitor_copy2_aggregated (performance_id, metric, prometheus_query, name, avg_value, stage)
+            INSERT INTO resource_monitor_aggregated_spsa (performance_id, metric, prometheus_query, name, avg_value, stage)
             SELECT performance_id, metric, prometheus_query, 'order' AS name, AVG(value), stage
-            FROM resource_monitor_copy2
+            FROM resource_monitor_spsa
             WHERE name LIKE 'order%'
             GROUP BY metric, performance_id
 
             UNION ALL
 
             SELECT performance_id, metric, prometheus_query, 'peer' AS name, AVG(value), stage
-            FROM resource_monitor_copy2
+            FROM resource_monitor_spsa
             WHERE name LIKE 'peer%'
             GROUP BY metric, performance_id
         """)
@@ -88,8 +88,8 @@ def aggregate_monitor_metric(mysql_connection):
 
         print("Data aggregated and written to resource_monitor_copy2 successfully.")
 
-    except Exception as e:
-        print(f"Error: {e}")
+    # except Exception as e:
+    #     print(f"Error: {e}")
 
     finally:
         # 关闭游标
@@ -129,49 +129,49 @@ def aggregated_lasso_dataset(mysql_connect, engine):
         # cursor fetch不会保留前一次的结果
         # 查询三个表进行聚合
         cursor.execute(
-            "SELECT * FROM config_parameter WHERE peer_discovery_authCachePurgeRetentionRatio < 1")
+            "SELECT * FROM config_parameter_spsa WHERE peer_discovery_authCachePurgeRetentionRatio < 1")
         config_rows = cursor.fetchall()
         config = pd.DataFrame(config_rows)
         config.rename(columns={'id': 'config_id'}, inplace=True)
         cursor.execute(
-            "SELECT id, config_id, avg_latency, throughput, bench_config, error_rate FROM performance_metric_copy2 WHERE stage IS NULL")
+            "SELECT id, config_id, avg_latency, throughput, bench_config, error_rate FROM performance_metric_spsa WHERE stage IS NULL")
         performance_rows = cursor.fetchall()
         performance = pd.DataFrame(performance_rows,
                                    columns=['id', 'config_id', 'avg_latency', 'throughput', 'bench_config',
                                             'error_rate'])
         performance.rename(columns={'id': 'performance_id'}, inplace=True)
-        dataset = pd.merge(config, performance, how='left', on='config_id')
+        dataset = pd.merge(config, performance, how='inner', on='config_id')
 
         cursor.execute(
-            "SELECT performance_id, avg_value FROM resource_monitor_copy2_aggregated WHERE metric = 'Disc Write (MB)' AND stage IS NULL")
+            "SELECT performance_id, avg_value FROM resource_monitor_aggregated_spsa WHERE metric = 'Disc Write (MB)' AND stage IS NULL")
         disc_write_rows = cursor.fetchall()
         disc_write = pd.DataFrame(disc_write_rows,
                                   columns=['performance_id', 'avg_value'])
         disc_write.rename(columns={'avg_value': 'disc_write'}, inplace=True)
 
         cursor.execute(
-            "SELECT performance_id, avg_value FROM resource_monitor_copy2_aggregated WHERE metric = 'gossip_state_commit_duration' AND stage IS NULL")
+            "SELECT performance_id, avg_value FROM resource_monitor_aggregated_spsa WHERE metric = 'gossip_state_commit_duration' AND stage IS NULL")
         gossip_rows = cursor.fetchall()
         gossip = pd.DataFrame(gossip_rows,
                               columns=['performance_id', 'avg_value'])
         gossip.rename(columns={'avg_value': 'gossip_state_commit_duration'}, inplace=True)
 
         cursor.execute(
-            "SELECT performance_id, avg_value FROM resource_monitor_copy2_aggregated WHERE metric = 'broadcast_validate_duration' AND stage IS NULL")
+            "SELECT performance_id, avg_value FROM resource_monitor_aggregated_spsa WHERE metric = 'broadcast_validate_duration' AND stage IS NULL")
         broadcast_validate_duration_rows = cursor.fetchall()
         broadcast_validate_duration = pd.DataFrame(broadcast_validate_duration_rows,
                                                    columns=['performance_id', 'avg_value'])
         broadcast_validate_duration.rename(columns={'avg_value': 'broadcast_validate_duration'}, inplace=True)
 
         cursor.execute(
-            "SELECT performance_id, avg_value FROM resource_monitor_copy2_aggregated WHERE metric = 'blockcutter_block_fill_duration' AND stage IS NULL")
+            "SELECT performance_id, avg_value FROM resource_monitor_aggregated_spsa WHERE metric = 'blockcutter_block_fill_duration' AND stage IS NULL")
         blockcutter_rows = cursor.fetchall()
         blockcutter = pd.DataFrame(blockcutter_rows,
                                    columns=['performance_id', 'avg_value'])
         blockcutter.rename(columns={'avg_value': 'blockcutter_block_fill_duration'}, inplace=True)
 
         cursor.execute(
-            "SELECT performance_id, avg_value FROM resource_monitor_copy2_aggregated WHERE metric = 'broadcast_enqueue_duration' AND stage IS NULL")
+            "SELECT performance_id, avg_value FROM resource_monitor_aggregated_spsa WHERE metric = 'broadcast_enqueue_duration' AND stage IS NULL")
         broadcast_enqueue_duration_rows = cursor.fetchall()
         broadcast_enqueue_duration = pd.DataFrame(broadcast_enqueue_duration_rows,
                                                   columns=['performance_id', 'avg_value'])
@@ -185,7 +185,7 @@ def aggregated_lasso_dataset(mysql_connect, engine):
         dataset.rename(columns={'id': 'config_id'}, inplace=True)
         # dataset.drop(columns=['performance_id'])
         dataset.dropna(subset=['config_id', 'performance_id'], inplace=True)
-        dataset.to_sql('dataset_copy1', con=engine, if_exists='append', index=False)
+        dataset.to_sql('dataset_spsa', con=engine, if_exists='append', index=False)
         mysql_connect.commit()
         print("Data aggregated and written to dataset_copy1 successfully.")
         # return dataset
@@ -216,7 +216,8 @@ def calculate_weight(df):
 
 
 def get_dataset_lasso(engine):
-    df = pd.read_sql('dataset', con=engine)
+    df = pd.read_sql('dataset_spsa', con=engine)
+    df = df[df['error_rate'] <= 50]
     df = df.drop(columns=['id', 'performance_id', 'config_id', 'stage', 'config_id', 'broadcast_enqueue_duration', 'blockcutter_block_fill_duration',
                           'broadcast_validate_duration', 'gossip_state_commit_duration'])
     performance_df = df[['avg_latency', 'throughput', 'error_rate', 'disc_write']]

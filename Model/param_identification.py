@@ -1,6 +1,6 @@
 from sklearn.linear_model import Lasso
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import StandardScaler, MinMaxScaler
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -107,7 +107,7 @@ def lasso_test(parameter_rows, performance_rows, weight):
     plt.axis('tight')
     plt.xlabel('alpha')
     plt.ylabel('weights: scaled coefficients')
-    plt.title('Lasso regression coefficients Vs. alpha')
+    # plt.title('Lasso regression coefficients Vs. alpha')
 
     plt.legend(top_20_features['feature'])
     plt.show()

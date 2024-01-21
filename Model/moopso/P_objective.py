@@ -57,7 +57,7 @@ def P_DTLZ(Operation, Problem, M, Input):
 
 
 def get_hlf_boundary():
-    param_range = initialize.read_yaml_config('F:/Project/PythonProject/Auto-Tuning-HLF/Benchmark-Deploy-Tool/param_range.yaml')
+    param_range = initialize.read_yaml_config('/Benchmark_Deploy_Tool/param_range.yaml')
     boundary = pd.DataFrame(columns=['Name', 'Lower', 'Upper'], index=range(17))
     boundary['Name'] = boundary['Name'].astype(str)
     boundary['Lower'] = boundary['Lower'].astype(float)
@@ -118,8 +118,10 @@ def model_predict_four_metric(input, model_name):
         return predictions_combined
     elif model_name == 'XGBoost':
         predictions_combined = None
+        # create & modify & query & open & query & transfer
+        payload_function = 'open'
         for target_col in ['throughput', 'avg_latency', 'disc_write']:
-            model = joblib.load(f'../traditional_model/{model_name}/{target_col}_best_model.pkl')
+            model = joblib.load(f'../traditional_model/{model_name}/{target_col}_{payload_function}_best_model.pkl')
             prediction = model.predict(input)
             if predictions_combined is None:
                 predictions_combined = prediction

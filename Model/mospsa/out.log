@@ -1,0 +1,136 @@
+最佳参数解: [870.69494964  47.64900885]
+最大总延迟: [356.70068]
+最佳参数解: [415.32644199   5.0183482 ]
+最大总延迟: [1950.701]
+最佳参数解: [241.5387602   66.46523401]
+最大总延迟: [1950.701]
+
+最大总延迟: [304.33852276]
+BatchSize:
+    # Max Message Count: The maximum number of messages to permit in a batch
+    MaxMessageCount: '10'
+    # Absolute Max Bytes: The absolute maximum number of bytes allowed for
+    # the serialized messages in a batch.
+    AbsoluteMaxBytes: 99 MB
+    # Preferred Max Bytes: The preferred maximum number of bytes allowed for
+    # the serialized messages in a batch. A message larger than the preferred
+    # max bytes will result in a batch larger than preferred max bytes.
+    PreferredMaxBytes: 1 MB
+512 kb
+Step 1: curr_objective: 1784.7 best_objective: 0 params: [6.803864344277557, 33.85914313197466]
+50 1000
+Step 1: curr_objective: 1749.5 best_objective: 0 params: [79.27892468752655, 74.6020492956438]
+Step 1: curr_objective: 1760.8 best_objective: 0 params: [22.16502310980683, 50.511716686845865]
+F:\Tools\Anaconda3\envs\Auto-Tuning-HLF\python.exe "F:/Tools/JetBrains/PyCharm 2021.1.3/plugins/python/helpers/pydev/pydevd.py" --multiprocess --qt-support=auto --client 127.0.0.1 --port 8732 --file F:/Project/PythonProject/Auto-Tuning-HLF/Model/mospsa/main.py
+Connected to pydev debugger (build 222.3739.56)
+cd /home/charles/Project/Blockchain/fabric-samples/test-network && ./network.sh down is executing
+cd /home/charles/Project/Blockchain/fabric-samples/test-network && ./network.sh up createChannel is executing
+cd /home/charles/Project/Blockchain/fabric-samples/test-network && source /etc/profile && ./network.sh deployCC -ccn simple -ccp ../../caliper-benchmarks/src/fabric/scenario/simple/go -ccl go is executing
+Output logged to D:/log/fabric_log_2024-01-16_19-11-58.log
+Already modify /home/charles/Project/Blockchain/fabric-samples/test-network/organizations/peerOrganizations/org1.example.com/connection-org1.yaml
+cd /home/charles/Project/Blockchain/caliper-benchmarks && bash launch_simple_spsa.sh is executing
+Output logged to D:/log/caliper_log_2024-01-16_19-12-59.log
+Read config: /home/charles/Project/Blockchain/fabric-samples/config/orderer.yaml
+Read config: /home/charles/Project/Blockchain/fabric-samples/test-network/configtx/configtx.yaml
+Read config: /home/charles/Project/Blockchain/fabric-samples/test-network/compose/docker/peercfg/core.yaml
+insert_metric_to_database done
+config_id: 10865280-b460-11ee-92b5-005056c00008 performance_metric: 10865281-b460-11ee-a9bf-005056c00008-0
+insert_metric_to_database done
+Already finish storage
+cp /home/charles/Project/Blockchain/report.html /home/charles/Project/Blockchain/caliper-benchmarks/report/report_10865280-b460-11ee-92b5-005056c00008_10865281-b460-11ee-a9bf-005056c00008_simple.html is executing
+Output logged to D:/log/mv_report_2024-01-16_19-15-09.log
+insert_metric_to_database done
+cd /home/charles/Project/Blockchain/fabric-samples/test-network && ./network.sh down is executing
+cd /home/charles/Project/Blockchain/fabric-samples/test-network && ./network.sh up createChannel is executing
+cd /home/charles/Project/Blockchain/fabric-samples/test-network && source /etc/profile && ./network.sh deployCC -ccn simple -ccp ../../caliper-benchmarks/src/fabric/scenario/simple/go -ccl go is executing
+Output logged to D:/log/fabric_log_2024-01-16_19-15-09.log
+Already modify /home/charles/Project/Blockchain/fabric-samples/test-network/organizations/peerOrganizations/org1.example.com/connection-org1.yaml
+cd /home/charles/Project/Blockchain/caliper-benchmarks && bash launch_simple_spsa.sh is executing
+Output logged to D:/log/caliper_log_2024-01-16_19-16-11.log
+Read config: /home/charles/Project/Blockchain/fabric-samples/config/orderer.yaml
+Read config: /home/charles/Project/Blockchain/fabric-samples/test-network/configtx/configtx.yaml
+Read config: /home/charles/Project/Blockchain/fabric-samples/test-network/compose/docker/peercfg/core.yaml
+insert_metric_to_database done
+config_id: 827998ce-b460-11ee-bea0-005056c00008 performance_metric: 827998cf-b460-11ee-92fc-005056c00008-0
+insert_metric_to_database done
+Already finish storage
+cp /home/charles/Project/Blockchain/report.html /home/charles/Project/Blockchain/caliper-benchmarks/report/report_827998ce-b460-11ee-bea0-005056c00008_827998cf-b460-11ee-92fc-005056c00008_simple.html is executing
+Output logged to D:/log/mv_report_2024-01-16_19-18-21.log
+insert_metric_to_database done
+Step 1: curr_objective: 357.2 best_objective: 0 params: [55.8140783167441, 93.55153351790702]
+cd /home/charles/Project/Blockchain/fabric-samples/test-network && ./network.sh down is executing
+cd /home/charles/Project/Blockchain/fabric-samples/test-network && ./network.sh up createChannel is executing
+cd /home/charles/Project/Blockchain/fabric-samples/test-network && source /etc/profile && ./network.sh deployCC -ccn simple -ccp ../../caliper-benchmarks/src/fabric/scenario/simple/go -ccl go is executing
+Output logged to D:/log/fabric_log_2024-01-16_19-18-21.log
+Already modify /home/charles/Project/Blockchain/fabric-samples/test-network/organizations/peerOrganizations/org1.example.com/connection-org1.yaml
+cd /home/charles/Project/Blockchain/caliper-benchmarks && bash launch_simple_spsa.sh is executing
+Output logged to D:/log/caliper_log_2024-01-16_19-19-25.log
+Read config: /home/charles/Project/Blockchain/fabric-samples/config/orderer.yaml
+Read config: /home/charles/Project/Blockchain/fabric-samples/test-network/configtx/configtx.yaml
+Read config: /home/charles/Project/Blockchain/fabric-samples/test-network/compose/docker/peercfg/core.yaml
+insert_metric_to_database done
+config_id: f4c2346b-b460-11ee-a3fc-005056c00008 performance_metric: f4c2346c-b460-11ee-9ee9-005056c00008-0
+insert_metric_to_database done
+Already finish storage
+cp /home/charles/Project/Blockchain/report.html /home/charles/Project/Blockchain/caliper-benchmarks/report/report_f4c2346b-b460-11ee-a3fc-005056c00008_f4c2346c-b460-11ee-9ee9-005056c00008_simple.html is executing
+Output logged to D:/log/mv_report_2024-01-16_19-21-35.log
+insert_metric_to_database done
+cd /home/charles/Project/Blockchain/fabric-samples/test-network && ./network.sh down is executing
+cd /home/charles/Project/Blockchain/fabric-samples/test-network && ./network.sh up createChannel is executing
+cd /home/charles/Project/Blockchain/fabric-samples/test-network && source /etc/profile && ./network.sh deployCC -ccn simple -ccp ../../caliper-benchmarks/src/fabric/scenario/simple/go -ccl go is executing
+Output logged to D:/log/fabric_log_2024-01-16_19-21-35.log
+Already modify /home/charles/Project/Blockchain/fabric-samples/test-network/organizations/peerOrganizations/org1.example.com/connection-org1.yaml
+cd /home/charles/Project/Blockchain/caliper-benchmarks && bash launch_simple_spsa.sh is executing
+Output logged to D:/log/caliper_log_2024-01-16_19-22-38.log
+Read config: /home/charles/Project/Blockchain/fabric-samples/config/orderer.yaml
+Read config: /home/charles/Project/Blockchain/fabric-samples/test-network/configtx/configtx.yaml
+Read config: /home/charles/Project/Blockchain/fabric-samples/test-network/compose/docker/peercfg/core.yaml
+insert_metric_to_database done
+config_id: 687f2c2f-b461-11ee-a433-005056c00008 performance_metric: 687f2c30-b461-11ee-9966-005056c00008-0
+insert_metric_to_database done
+Already finish storage
+cp /home/charles/Project/Blockchain/report.html /home/charles/Project/Blockchain/caliper-benchmarks/report/report_687f2c2f-b461-11ee-a433-005056c00008_687f2c30-b461-11ee-9966-005056c00008_simple.html is executing
+Output logged to D:/log/mv_report_2024-01-16_19-24-48.log
+insert_metric_to_database done
+Step 2: curr_objective: 357.2 best_objective: 357.2 params: [957.3152401458899, 53.63408782006213]
+cd /home/charles/Project/Blockchain/fabric-samples/test-network && ./network.sh down is executing
+cd /home/charles/Project/Blockchain/fabric-samples/test-network && ./network.sh up createChannel is executing
+cd /home/charles/Project/Blockchain/fabric-samples/test-network && source /etc/profile && ./network.sh deployCC -ccn simple -ccp ../../caliper-benchmarks/src/fabric/scenario/simple/go -ccl go is executing
+Output logged to D:/log/fabric_log_2024-01-16_19-24-48.log
+Already modify /home/charles/Project/Blockchain/fabric-samples/test-network/organizations/peerOrganizations/org1.example.com/connection-org1.yaml
+cd /home/charles/Project/Blockchain/caliper-benchmarks && bash launch_simple_spsa.sh is executing
+Output logged to D:/log/caliper_log_2024-01-16_19-25-51.log
+Read config: /home/charles/Project/Blockchain/fabric-samples/config/orderer.yaml
+Read config: /home/charles/Project/Blockchain/fabric-samples/test-network/configtx/configtx.yaml
+Read config: /home/charles/Project/Blockchain/fabric-samples/test-network/compose/docker/peercfg/core.yaml
+insert_metric_to_database done
+config_id: db5cc52c-b461-11ee-8900-005056c00008 performance_metric: db5cc52d-b461-11ee-add6-005056c00008-0
+insert_metric_to_database done
+Already finish storage
+cp /home/charles/Project/Blockchain/report.html /home/charles/Project/Blockchain/caliper-benchmarks/report/report_db5cc52c-b461-11ee-8900-005056c00008_db5cc52d-b461-11ee-add6-005056c00008_simple.html is executing
+Output logged to D:/log/mv_report_2024-01-16_19-28-01.log
+insert_metric_to_database done
+cd /home/charles/Project/Blockchain/fabric-samples/test-network && ./network.sh down is executing
+cd /home/charles/Project/Blockchain/fabric-samples/test-network && ./network.sh up createChannel is executing
+cd /home/charles/Project/Blockchain/fabric-samples/test-network && source /etc/profile && ./network.sh deployCC -ccn simple -ccp ../../caliper-benchmarks/src/fabric/scenario/simple/go -ccl go is executing
+Output logged to D:/log/fabric_log_2024-01-16_19-28-01.log
+Already modify /home/charles/Project/Blockchain/fabric-samples/test-network/organizations/peerOrganizations/org1.example.com/connection-org1.yaml
+cd /home/charles/Project/Blockchain/caliper-benchmarks && bash launch_simple_spsa.sh is executing
+Output logged to D:/log/caliper_log_2024-01-16_19-29-03.log
+Read config: /home/charles/Project/Blockchain/fabric-samples/config/orderer.yaml
+Read config: /home/charles/Project/Blockchain/fabric-samples/test-network/configtx/configtx.yaml
+Read config: /home/charles/Project/Blockchain/fabric-samples/test-network/compose/docker/peercfg/core.yaml
+insert_metric_to_database done
+config_id: 4e9abd06-b462-11ee-abb6-005056c00008 performance_metric: 4e9abd07-b462-11ee-8b28-005056c00008-0
+insert_metric_to_database done
+Already finish storage
+cp /home/charles/Project/Blockchain/report.html /home/charles/Project/Blockchain/caliper-benchmarks/report/report_4e9abd06-b462-11ee-abb6-005056c00008_4e9abd07-b462-11ee-8b28-005056c00008_simple.html is executing
+Output logged to D:/log/mv_report_2024-01-16_19-31-13.log
+insert_metric_to_database done
+Step 3: curr_objective: 356.6 best_objective: 357.2 params: [9534.286735144378, 57.520654451514204]
+cd /home/charles/Project/Blockchain/fabric-samples/test-network && ./network.sh down is executing
+cd /home/charles/Project/Blockchain/fabric-samples/test-network && ./network.sh up createChannel is executing
+cd /home/charles/Project/Blockchain/fabric-samples/test-network && source /etc/profile && ./network.sh deployCC -ccn simple -ccp ../../caliper-benchmarks/src/fabric/scenario/simple/go -ccl go is executing
+Output logged to D:/log/fabric_log_2024-01-16_19-31-13.log
+Already modify /home/charles/Project/Blockchain/fabric-samples/test-network/organizations/peerOrganizations/org1.example.com/connection-org1.yaml
+cd /home/charles/Project/Blockchain/caliper-benchmarks && bash launch_simple_spsa.sh is executing

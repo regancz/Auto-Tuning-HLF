@@ -1,0 +1,20 @@
+Parameters:
+  Configtx:
+#    Orderer_BatchTimeout:
+#      lower: 1s
+#      upper: 5s
+#      step: 1
+    Orderer_BatchSize_MaxMessageCount:
+      value: 10
+#      lower: 10
+#      upper: 1000
+#      step: 100
+#    Orderer_BatchSize_AbsoluteMaxBytes:
+#      lower: 50MB
+#      upper: 100MB
+#      step: 10
+    Orderer_BatchSize_PreferredMaxBytes:
+      value: 1
+#      lower: 1MB
+#      upper: 100MB
+#      step: 10
