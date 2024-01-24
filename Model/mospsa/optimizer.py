@@ -5,7 +5,7 @@ import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 
 from Model import initialize
-from Model.moopso.P_objective import convert_to_number
+from Model.moopso.p_objective import convert_to_number
 from Model.mospsa.loss import evacuate_fabric_metric, evacuate_fabric_metric_prediction_model
 
 

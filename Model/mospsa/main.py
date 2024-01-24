@@ -8,7 +8,7 @@ from Model.mospsa.loss import evacuate_fabric_metric, evacuate_fabric, evacuate_
     evacuate_fabric_metric_prediction_model
 from Model.mospsa.optimizer import spsa_maximize, adam_maximize, get_hlf_boundary_2metirc, spsa_maximize_optimize, \
     spsa_maximize2, spsa_maximize3
-from Model.moopso.P_objective import get_hlf_boundary
+from Model.moopso.p_objective import get_hlf_boundary
 
 
 # def main1():

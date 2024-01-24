@@ -74,16 +74,16 @@ def evacuate_fabric_metric_prediction_model(input_param, rho):
     model_name = random.choice(['SVR'])
     # 'throughput', 'avg_latency', 'disc_write'
     # for target_col in ['disc_write']:
-    model_throughput = joblib.load(f'../traditional_model/spsa/{model_name}/{cc_name}_throughput_2metric_model.pkl')
+    model_throughput = joblib.load(f'F:/Project/PythonProject/Auto-Tuning-HLF/Model/traditional_model/spsa/{model_name}/{cc_name}_throughput_2metric_model.pkl')
     throughput = model_throughput.predict(input_param)
     # print(model_name)
-    model_error_rate = joblib.load(f'../traditional_model/spsa/{model_name}/{cc_name}_error_rate_2metric_model.pkl')
+    model_error_rate = joblib.load(f'F:/Project/PythonProject/Auto-Tuning-HLF/Model/traditional_model/spsa/{model_name}/{cc_name}_error_rate_2metric_model.pkl')
     error_rate = model_error_rate.predict(input_param)
     # fail = 0
-    model_disc_write = joblib.load(f'../traditional_model/spsa/{model_name}/{cc_name}_disc_write_2metric_model.pkl')
+    model_disc_write = joblib.load(f'F:/Project/PythonProject/Auto-Tuning-HLF/Model/traditional_model/spsa/{model_name}/{cc_name}_disc_write_2metric_model.pkl')
     disc_write = model_disc_write.predict(input_param)
 
-    model_avg_latency = joblib.load(f'../traditional_model/spsa/{model_name}/{cc_name}_avg_latency_2metric_model.pkl')
+    model_avg_latency = joblib.load(f'F:/Project/PythonProject/Auto-Tuning-HLF/Model/traditional_model/spsa/{model_name}/{cc_name}_avg_latency_2metric_model.pkl')
     avg_latency = model_avg_latency.predict(input_param)
 
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d")

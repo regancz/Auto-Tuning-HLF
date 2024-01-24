@@ -1,3 +1,5 @@
+import random
+
 import joblib
 import numpy
 import numpy as np
@@ -57,21 +59,26 @@ def P_DTLZ(Operation, Problem, M, Input):
 
 
 def get_hlf_boundary():
-    param_range = initialize.read_yaml_config('/Benchmark_Deploy_Tool/param_range.yaml')
+    param_range = initialize.read_yaml_config('../../Benchmark_Deploy_Tool/param_range.yaml')
     boundary = pd.DataFrame(columns=['Name', 'Lower', 'Upper'], index=range(17))
     boundary['Name'] = boundary['Name'].astype(str)
     boundary['Lower'] = boundary['Lower'].astype(float)
     boundary['Upper'] = boundary['Upper'].astype(float)
     idx = 0
-    contained_col = ['peer_gossip_dialTimeout', 'peer_gossip_aliveTimeInterval',
+    contained_col = ['peer_gossip_dialTimeout',
+                     'peer_gossip_aliveTimeInterval',
                      'peer_deliveryclient_reConnectBackoffThreshold',
                      'peer_gossip_publishCertPeriod',
-                     'peer_gossip_election_leaderElectionDuration', 'peer_keepalive_minInterval',
+                     'peer_gossip_election_leaderElectionDuration',
+                     'peer_keepalive_minInterval',
                      'peer_gossip_maxBlockCountToStore',
-                     'peer_deliveryclient_connTimeout', 'peer_gossip_requestStateInfoInterval',
+                     'peer_deliveryclient_connTimeout',
+                     'peer_gossip_requestStateInfoInterval',
                      'peer_keepalive_client_timeout',
-                     'peer_discovery_authCacheMaxSize', 'peer_discovery_authCachePurgeRetentionRatio',
-                     'Orderer_BatchSize_PreferredMaxBytes', 'Orderer_BatchSize_MaxMessageCount',
+                     'peer_discovery_authCacheMaxSize',
+                     'peer_discovery_authCachePurgeRetentionRatio',
+                     'Orderer_BatchSize_PreferredMaxBytes',
+                     'Orderer_BatchSize_MaxMessageCount',
                      'General_Authentication_TimeWindow',
                      'General_Keepalive_ServerInterval',
                      'Orderer_BatchSize_AbsoluteMaxBytes']
@@ -103,18 +110,21 @@ def convert_to_number(arg):
 def model_predict_four_metric(input, model_name):
     if model_name == 'bpnn':
         predictions_combined = None
+        payload_function = 'open'
         for target_col in ['throughput', 'avg_latency', 'disc_write']:
             model = RegressionModel()
-            model.load_state_dict(torch.load(f'../../Model/bpnn/bpnn_{target_col}.pth'))
-            peer_config = input
-            orderer_config = input
-            metric = input
-            bench_config = input
-            output = model(peer_config, orderer_config, metric, bench_config)
+            model.load_state_dict(torch.load(f'../../Model/model_dict/bpnn/bpnn_{payload_function}_{target_col}.pth'))
+            peer_config = input[:, :12]
+            orderer_config = input[:, 12:]
+            output = []
+            # for i in range(len(input)):
+            #     out = model(peer_config=peer_config[i, :], orderer_config=orderer_config[i, :], metric=input[i, :])
+            #     output.append(out.item())
+            output = model(peer_config=peer_config[:, :], orderer_config=orderer_config[:, :], metric=input[:, :])
             if predictions_combined is None:
-                predictions_combined = output
+                predictions_combined = output.detach().numpy()
             else:
-                predictions_combined = np.column_stack((predictions_combined, output))
+                predictions_combined = np.column_stack((predictions_combined, output.detach().numpy()))
         return predictions_combined
     elif model_name == 'XGBoost':
         predictions_combined = None

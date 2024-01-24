@@ -7,7 +7,7 @@ from skopt import gp_minimize
 from skopt.plots import plot_convergence
 from skopt.space import Real
 
-from Model.moopso.P_objective import get_hlf_boundary
+from Model.moopso.p_objective import get_hlf_boundary
 
 
 def obj_fun(params):

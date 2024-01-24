@@ -6,46 +6,18 @@ import torch
 from sklearn.preprocessing import MinMaxScaler
 from torch import nn, optim
 
-from Model import initialize, storage, param_identification, performance_analyze
+from Model.initialize import read_yaml_config, mysql_connect
 from Model.mutil_layer_prediction_model import RegressionModel, CustomLoss, train_and_predict_with_metrics
 from Model.performance_analyze import get_dataset_lasso, calculate_weight
 
 if __name__ == "__main__":
-    configParameters = initialize.read_yaml_config('../Benchmark_Deploy_Tool/config.yaml')
-    mysql_connection, engine = initialize.mysql_connect(configParameters['Database']['Mysql']['Host'],
+    configParameters = read_yaml_config('../Benchmark_Deploy_Tool/config.yaml')
+    mysql_connection, engine = mysql_connect(configParameters['Database']['Mysql']['Host'],
                                                         configParameters['Database']['Mysql']['Port'],
                                                         configParameters['Database']['Mysql']['User'],
                                                         configParameters['Database']['Mysql']['Password'],
                                                         configParameters['Database']['Mysql']['Database'])
-
-    # get_dataset_lasso(engine)
-    #
-    # parameter_data, parameter_rows = storage.query_config_parameter_by_table(mysql_connection)
-    # performance_data, performance_rows = storage.query_performance_metric_by_table(mysql_connection)
-    # param_identification.lasso_test(parameter_rows, performance_rows)
-    # selected_params, selected_feats = param_identification.feature_selection(parameter_data, performance_data,
-    #                                                                          alpha=0.1, method='lasso',
-    #                                                                          sort_method='feature_importance')
-    # print("Selected Parameters:", selected_params)
-    # print("Selected Features:", selected_feats)
-    #
-    # storage.prepare_data(mysql_connection)
-    # storage.update_resource_monitor(mysql_connection)
-    # storage.calculate_error_rate(mysql_connection)
-    # performance_analyze.aggregated_lasso_dataset(mysql_connection, engine)
-    # performance_analyze.get_dataset_lasso(engine)
-
-    # df = performance_analyze.get_performance_metric(mysql_connection)
-    # df = df.drop('id', axis=1)
-    # weight = performance_analyze.calculate_weight(df)
-    # print(weight)
-    # param_identification.lasso_test(parameter_rows, performance_rows)
-
-
-
-    # train model
     df = pd.read_sql('dataset', con=engine)
-    # df = df[~df['bench_config'].isin(['query'])]
     # create & modify & query & open & query & transfer
     payload_method = 'transfer'
     target_col = 'disc_write'
@@ -67,33 +39,11 @@ if __name__ == "__main__":
     metric = df[['throughput', 'avg_latency', 'error_rate', 'disc_write', 'gossip_state_commit_duration',
                  'broadcast_validate_duration',
                  'blockcutter_block_fill_duration', 'broadcast_enqueue_duration']]
-
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-    # nn
     model = RegressionModel()
     # custom_criterion = CustomLoss()
     optimizer = optim.Adam(model.parameters(), lr=0.01)
-    # optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
-    # target_df = metric[['throughput', 'avg_latency', 'error_rate', 'disc_write']]
-
-    # performance_df = df[['avg_latency', 'throughput', 'error_rate', 'disc_write']]
-    # weight = calculate_weight(performance_df)
-    #
-    # target_df = metric['throughput'] * weight['throughput'] + metric['avg_latency'] * weight['avg_latency'] + \
-    #     metric['error_rate'] * weight['error_rate'] + metric['disc_write'] * weight['disc_write']
-    # target_df = target_df.to_frame()
-
     target_df_prev = metric[[target_col]]
-
-    # scaler = MinMaxScaler()
-    # target_normalized = scaler.fit_transform(target_df)
-    # target_tensor = torch.tensor(target_normalized).float()
-
     target_tensor = torch.tensor(target_df_prev.values).float()
-    # target_tensor = torch.log1p(target_tensor)
-    # logging.basicConfig(filename='./log/proposed_avg_latency_mae.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-
     threshold_loss = 100
     start_time = time.time()
     repeat_times = 0
@@ -103,12 +53,7 @@ if __name__ == "__main__":
         output = model(peer_config, orderer_config, metric)
         # custom_loss = custom_criterion(output, target_tensor, loss_hidden1, loss_hidden2, loss_hidden3)
         # criterion = nn.MSELoss()
-
         criterion = nn.L1Loss()
-        # output_array = output.detach().numpy()
-        # output_normalized = scaler.fit_transform(output_array)
-        # output_tensor = torch.tensor(output_normalized).float()
-
         # mse_loss = criterion(torch.expm1(output), torch.expm1(target_tensor))
         loss = criterion(output, target_tensor)
         # loss = torch.sqrt(loss)

@@ -2,11 +2,10 @@
 import time
 
 import numpy as np
-
-import P_objective
-import init
-import plot
-import update
+from Model.moopso import init
+from Model.moopso import update
+from Model.moopso import plot
+from Model.moopso.p_objective import model_predict_four_metric
 
 
 class Mopso:
@@ -16,15 +15,15 @@ class Mopso:
         self.thresh = thresh
         self.max_ = max_
         self.min_ = min_
-        # self.max_v = (max_-min_)*0.5  #速度上限
-        # self.min_v = (max_-min_)*(-1)*0.5 #速度下限
-        self.max_v = 100 * np.ones(len(max_), )  # 速度上限,速度不存在上下限，因此设置很大
-        self.min_v = -100 * np.ones(len(min_), )  # 速度下限
+        self.max_v = (max_-min_)*0.3   # 速度上限
+        self.min_v = (max_-min_)*(-1)*0.3  # 速度下限
+        # self.max_v = 10 * np.ones(len(max_), )  # 速度上限,速度不存在上下限，因此设置很大
+        # self.min_v = -10 * np.ones(len(min_), )  # 速度下限
         self.plot_ = plot.Plot_pareto()
 
     def evaluation_fitness(self):
         # self.fitness_ = P_objective.P_objective("value", "DTLZ2", 2, self.in_)
-        self.fitness_ = P_objective.model_predict_four_metric(self.in_, 'XGBoost')
+        self.fitness_ = model_predict_four_metric(self.in_, 'bpnn')
 
     def initialize(self):
         # 初始化粒子位置
@@ -63,8 +62,6 @@ class Mopso:
         since = time.time()
         for i in range(cycle_):
             self.update_()
-
             print('第', i, '代已完成，time consuming: ', np.round(time.time() - since, 2), "s")
-
             self.plot_.show(self.in_, self.fitness_, self.archive_in, self.archive_fitness, i)
         return self.archive_in, self.archive_fitness

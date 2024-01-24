@@ -10,7 +10,7 @@ from pymoo.operators.sampling.rnd import FloatRandomSampling
 from pymoo.optimize import minimize
 from pymoo.termination import get_termination
 
-from Model.moopso.P_objective import get_hlf_boundary
+from Model.moopso.p_objective import get_hlf_boundary
 
 
 def main():

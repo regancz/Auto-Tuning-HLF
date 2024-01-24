@@ -1,5 +1,5 @@
 import numpy as np
-import sortrows
+from Model.moopso import sortrows
 
 
 def NDSort(PopObj, Remain_Num):

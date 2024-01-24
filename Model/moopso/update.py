@@ -1,16 +1,13 @@
 # encoding: utf-8
 import numpy as np
-import NDsort
-
+from Model.moopso import NDsort
 
 def update_v(v_, v_min, v_max, in_, in_pbest, in_gbest):
-    # 更新速度ٶ�ֵ
     w = 0.4
     N, D = v_.shape
     r1 = np.tile(np.random.rand(N, 1), (1, D))
     r2 = np.tile(np.random.rand(N, 1), (1, D))
     v_temp = w * v_ + r1 * (in_pbest - in_) + r2 * (in_gbest - in_)
-    # 速度边界处理ֵ
     Upper = np.tile(v_max, (N, 1))
     Lower = np.tile(v_min, (N, 1))
     v_temp = np.maximum(np.minimum(Upper, v_temp), Lower)  # v不存在上下限，因此是否有必要进行限制

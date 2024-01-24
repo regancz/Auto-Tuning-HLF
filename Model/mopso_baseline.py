@@ -5,7 +5,7 @@ from pymoo.core.problem import Problem
 from pymoo.core.sampling import Sampling
 from pymoo.optimize import minimize
 
-from Model.moopso.P_objective import get_hlf_boundary
+from Model.moopso.p_objective import get_hlf_boundary
 
 
 def get_hlf_boundary_constraints():

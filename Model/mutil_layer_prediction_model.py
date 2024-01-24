@@ -22,13 +22,11 @@ class MAELoss(nn.Module):
         super(MAELoss, self).__init__()
 
     def forward(self, pred, true):
-        # calculate Error
         return torch.mean(torch.abs((pred - true) / true))
 
     def backward(self, output, target):
-        # 计算损失关于输入的梯度
         diff = torch.sign(output - target)
-        return diff / output.size(0)  # 返回平均梯度
+        return diff / output.size(0)
 
 
 class CustomLoss(nn.Module):
@@ -36,7 +34,7 @@ class CustomLoss(nn.Module):
         super(CustomLoss, self).__init__()
 
     def forward(self, output, target, hidden1, hidden2, hidden3):
-        loss = torch.mean(hidden1 + hidden2 + hidden3)  # 自定义损失
+        loss = torch.mean(hidden1 + hidden2 + hidden3)
         return loss
 
 
@@ -44,7 +42,7 @@ class RegressionModel(nn.Module):
     def __init__(self):
         super(RegressionModel, self).__init__()
         self.hidden1 = nn.Sequential(
-            # nn.BatchNorm1d(12, affine=False),
+            nn.BatchNorm1d(12, affine=False),
             nn.Linear(12, 1),
             nn.ReLU(),
             # nn.Dropout(0.3),
@@ -61,7 +59,6 @@ class RegressionModel(nn.Module):
             nn.ReLU(),
             # nn.Dropout(0.3),
         )
-
         self.output = nn.Linear(3, 1)
 
     # dim: 12, 5, 4 + 4
@@ -74,7 +71,8 @@ class RegressionModel(nn.Module):
         elif isinstance(peer_config, pd.DataFrame):
             peer_config_tensor = torch.tensor(peer_config.values, dtype=torch.float32)
         elif isinstance(peer_config, np.ndarray):
-            peer_config_tensor = torch.tensor(peer_config, dtype=torch.float32).reshape([1, 12])
+            num_rows, num_columns = peer_config.shape
+            peer_config_tensor = torch.tensor(peer_config, dtype=torch.float32).reshape([num_rows, num_columns])
         else:
             raise ValueError("Invalid type for peer_config. Should be list or DataFrame.")
 
@@ -83,23 +81,10 @@ class RegressionModel(nn.Module):
         elif isinstance(orderer_config, pd.DataFrame):
             orderer_config_tensor = torch.tensor(orderer_config.values, dtype=torch.float32)
         elif isinstance(orderer_config, np.ndarray):
-            orderer_config_tensor = torch.tensor(orderer_config, dtype=torch.float32).reshape([1, 5])
+            num_rows, num_columns = orderer_config.shape
+            orderer_config_tensor = torch.tensor(orderer_config, dtype=torch.float32).reshape([num_rows, num_columns])
         else:
             raise ValueError("Invalid type for orderer_config. Should be list or DataFrame.")
-        # peer_config_tensor = torch.tensor(peer_config_df.values).float()
-        # orderer_config_tensor = torch.tensor(orderer_config_df.values).float()
-        # extra_config_tensor = torch.tensor(extra_config_df.values).float()
-        # bench_config_tensor = torch.tensor(bench_config_df.values).float()
-
-        # metric_df = metric[['gossip_state_commit_duration',
-        #                     'broadcast_validate_duration',
-        #                     'blockcutter_block_fill_duration',
-        #                     'broadcast_enqueue_duration']]
-        # minmax_scaler = MinMaxScaler()
-        # metric_scaled = minmax_scaler.fit_transform(metric_df)
-        # metric_tensor = torch.tensor(metric_scaled).float()
-
-        # combined_input1 = torch.cat((peer_config_tensor), dim=1)
         out_hidden1 = self.hidden1(peer_config_tensor)
         combined_input2 = torch.cat((out_hidden1, orderer_config_tensor), dim=1)
         out_hidden2 = self.hidden2(combined_input2)
@@ -115,67 +100,22 @@ class SLRegressionModel(nn.Module):
     def __init__(self):
         super(SLRegressionModel, self).__init__()
         self.hidden1 = nn.Sequential(
-            # nn.BatchNorm1d(12, affine=False),
             nn.Linear(17, 3),
             nn.ReLU(),
-            # nn.Dropout(0.3),
         )
-        # self.hidden2 = nn.Sequential(
-        #     # nn.BatchNorm1d(6, affine=False),
-        #     nn.Linear(11, 1),
-        #     nn.ReLU(),
-        #     # nn.Dropout(0.3),
-        # )
-        # self.hidden3 = nn.Sequential(
-        #     # nn.BatchNorm1d(14, affine=False),
-        #     nn.Linear(19, 1),
-        #     nn.ReLU(),
-        #     # nn.Dropout(0.3),
-        # )
-
         self.output = nn.Linear(3, 1)
 
     # dim: 12, 5, 4 + 4
     def forward(self, peer_config_df, orderer_config_df, metric):
-        extra_config_df = orderer_config_df[['Orderer_BatchSize_PreferredMaxBytes',
-                                             'Orderer_BatchSize_MaxMessageCount',
-                                             'Orderer_General_Authentication_TimeWindow']]
-        # peer_config = torch.tensor(peer_config_df.values)
-        # orderer_config = torch.tensor(orderer_config_df.values)
-        # extra_config = torch.tensor(extra_config_df.values)
         peer_config_tensor = torch.tensor(peer_config_df.values).float()
         orderer_config_tensor = torch.tensor(orderer_config_df.values).float()
-        extra_config_tensor = torch.tensor(extra_config_df.values).float()
-        # bench_config_tensor = torch.tensor(bench_config_df.values).float()
-
-        metric_df = metric[['gossip_state_commit_duration',
-                            'broadcast_validate_duration',
-                            'blockcutter_block_fill_duration',
-                            'broadcast_enqueue_duration']]
-        minmax_scaler = MinMaxScaler()
-        metric_scaled = minmax_scaler.fit_transform(metric_df)
-        metric_tensor = torch.tensor(metric_scaled).float()
-
         combined_input1 = torch.cat((peer_config_tensor, orderer_config_tensor), dim=1)
         out_hidden1 = self.hidden1(combined_input1)
-        # relu(out_hidden1, inplace=True)
-        # combined_input2 = torch.cat((bench_config_tensor, out_hidden1, orderer_config_tensor), dim=1)
-        # out_hidden2 = self.hidden2(combined_input2)
-        # combined_input3 = torch.cat((bench_config_tensor, out_hidden1, out_hidden2, peer_config_tensor), dim=1)
-        # out_hidden3 = self.hidden3(combined_input3)
-        # combined_input4 = torch.cat((bench_config_tensor, out_hidden1, out_hidden2, out_hidden3, metric_tensor), dim=1)
         output = self.output(out_hidden1)
-
         return output
 
 
 def train_and_predict_with_metrics(peer_config, orderer_config, metric, weight, payload_function):
-    # 选择特征和目标列
-    # features = pd.concat([peer_config, orderer_config, metric[['gossip_state_commit_duration',
-    #                                                            'broadcast_validate_duration',
-    #                                                            'blockcutter_block_fill_duration',
-    #                                                            'broadcast_enqueue_duration']]], axis=1)
-    # features = pd.concat([peer_config, orderer_config], axis=1)
     features = orderer_config[['Orderer_BatchSize_PreferredMaxBytes', 'Orderer_BatchSize_MaxMessageCount']]
     for target_col in ['throughput', 'avg_latency', 'disc_write']:
         target = metric[target_col]
@@ -183,8 +123,6 @@ def train_and_predict_with_metrics(peer_config, orderer_config, metric, weight, 
         scaler = StandardScaler()
         X_train_scaled = scaler.fit_transform(X_train)
         X_test_scaled = scaler.transform(X_test)
-        # y_train_scaler = StandardScaler()
-        # y_train_scaled = y_train_scaler.fit_transform(y_train.values.reshape(-1, 1))
         scoring = {'MAE': make_scorer(mean_absolute_error),
                    'RMSE': make_scorer(lambda y_true, y_pred: np.sqrt(mean_squared_error(y_true, y_pred)))}
         models = [XGBRegressor(), SVR(), AdaBoostRegressor(), KNeighborsRegressor()]
@@ -264,7 +202,7 @@ def train_and_predict_with_metrics(peer_config, orderer_config, metric, weight, 
             print(f"Train Time: {elapsed_time}")
             print("")
             # break
-    return  # 返回其它结果（这里你可以补充其他返回结果）
+    return
 
 
 def train_model_for_sampling(df):
@@ -451,23 +389,6 @@ def train_boost_2metric(df, cc_name, name, model, param_grid):
         ]]
 
     metric = df[['throughput', 'avg_latency', 'disc_write', 'error_rate', 'blockcutter_block_fill_duration']]
-    # model = XGBRegressor()
-    # param_grid = {
-    #     'learning_rate': [2],
-    #     'max_depth': [3],
-    #     'n_estimators': [200],
-    #     'subsample': [0.3],
-    #     'colsample_bytree': [0.3],
-    # }
-
-    # model = SVR()
-    # param_grid = {
-    #     'kernel': ['linear', 'rbf', 'poly'],
-    #     'gamma': [0.1, 0.2, 0.3],
-    #     'C': [0.1, 1, 10],
-    # }
-
-    # {'colsample_bytree': 0.3, 'learning_rate': 2, 'max_depth': 3, 'n_estimators': 200, 'subsample': 0.3}
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d")
     log_prefix = 'boost_2metric'
     log_file = f"F:/Project/PythonProject/Auto-Tuning-HLF/Model/log/spsa/{log_prefix}_{timestamp}.log"
@@ -482,20 +403,12 @@ def train_boost_2metric(df, cc_name, name, model, param_grid):
     features = orderer_config
     for target_col in tqdm(['blockcutter_block_fill_duration']):
         X_train, X_test, y_train, y_test = train_test_split(features, metric[target_col], test_size=0.2, random_state=42)
-        # x_scaler = MinMaxScaler()
-        # X_train_scaled = x_scaler.fit_transform(X_train)
-        # X_test_scaled = x_scaler.transform(X_test)
-
-        # normalized_value = normalize_value(x_value, x_min_original, x_max_original, a_target, b_target)
         scoring = {'Error': make_scorer(mean_absolute_error)}
-        # model = None
-        # param_grid = {}
         grid = GridSearchCV(model, param_grid, scoring=scoring, refit='Error', cv=5, verbose=2)
         grid.fit(X_train, y_train.values)
         best_params = grid.best_params_
         best_model = grid.best_estimator_
         predictions = best_model.predict(X_test)
-        # print(predictions)
         joblib.dump(best_model, f'./traditional_model/spsa/{name}/{cc_name}_{target_col}_2metric_model.pkl')
         # mae = mean_absolute_error(y_test / y_test, predictions / y_test)
         mae = mean_absolute_error(y_test, predictions)
@@ -506,10 +419,10 @@ def train_boost_2metric(df, cc_name, name, model, param_grid):
 
 def train_model_for_spsa(df, cc_name):
     model_names = [
-        # 'XGBoost',
+        'XGBoost',
         'SVR',
-        # 'AdaBoost',
-        # 'KNeighbors'
+        'AdaBoost',
+        'KNeighbors'
     ]
     for name in model_names:
         if name == 'XGBoost':

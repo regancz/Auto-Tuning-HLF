@@ -1,0 +1,17 @@
+General_Authentication_TimeWindow: 22.0
+General_Keepalive_ServerInterval: 1.0
+Orderer_BatchSize_AbsoluteMaxBytes: 21.0
+Orderer_BatchSize_MaxMessageCount: 1.0
+Orderer_BatchSize_PreferredMaxBytes: 1.0
+peer_deliveryclient_connTimeout: 27.0
+peer_deliveryclient_reConnectBackoffThreshold: 2.0
+peer_discovery_authCacheMaxSize: 12.0
+peer_discovery_authCachePurgeRetentionRatio: 13.0
+peer_gossip_aliveTimeInterval: 4.0
+peer_gossip_dialTimeout: 17.0
+peer_gossip_election_leaderElectionDuration: 13.0
+peer_gossip_maxBlockCountToStore: 9.0
+peer_gossip_publishCertPeriod: 24.0
+peer_gossip_requestStateInfoInterval: 19.0
+peer_keepalive_client_timeout: 41.0
+peer_keepalive_minInterval: 21.0

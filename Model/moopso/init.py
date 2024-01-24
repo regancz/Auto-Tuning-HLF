@@ -1,8 +1,7 @@
 # encoding: utf-8
 import numpy as np
 
-import NDsort
-
+from Model.moopso import NDsort
 
 def init_designparams(particals, in_min, in_max):
     in_dim = len(in_max)  # 输入参数维度

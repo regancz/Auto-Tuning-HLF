@@ -79,16 +79,14 @@ class Plot_pareto:
         x = fitness_[:, 0]
         y = fitness_[:, 1]
         z = fitness_[:, 2]
-
+        plt.scatter(x, y, z)
+        plt.show()
         xi = np.linspace(min(x), max(x), 100)
         yi = np.linspace(min(y), max(y), 100)
         xi, yi = np.meshgrid(xi, yi)
 
         zi = griddata((x, y), z, (xi, yi), method='cubic')  # 使用cubic插值方法进行插值
-
-        # 绘制曲面
         ax.plot_surface(xi, yi, zi, cmap='viridis', alpha=0.5)  # 以较低的alpha值绘制曲面，以便看到散点
-
         plt.show()
 
 
