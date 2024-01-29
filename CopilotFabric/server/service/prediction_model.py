@@ -18,8 +18,7 @@ from xgboost import XGBRegressor
 from CopilotFabric.server.api import engine
 from CopilotFabric.server.service import logger, minio_client, model_config
 from Model.initialize import read_yaml_config
-from Model.mutil_layer_prediction_model import RegressionModel, train_model_for_spsa, train_and_predict_with_metrics
-from Model.performance_analyze import calculate_weight
+from Model.mutil_layer_prediction_model import RegressionModel
 
 
 def bpnn_predict_model():
@@ -50,6 +49,7 @@ def bpnn_predict_model():
                               'broadcast_validate_duration',
                               'blockcutter_block_fill_duration', 'broadcast_enqueue_duration']]
             model = RegressionModel()
+            # model = SLRegressionModel()
             optimizer = optim.Adam(model.parameters(), lr=0.01)
             target_df_prev = metric[[target_col]]
             target_tensor = torch.tensor(target_df_prev.values).float()

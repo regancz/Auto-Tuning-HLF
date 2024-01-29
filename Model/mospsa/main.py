@@ -8,7 +8,7 @@ from Model.mospsa.loss import evacuate_fabric_metric, evacuate_fabric, evacuate_
     evacuate_fabric_metric_prediction_model
 from Model.mospsa.optimizer import spsa_maximize, adam_maximize, get_hlf_boundary_2metirc, spsa_maximize_optimize, \
     spsa_maximize2, spsa_maximize3
-from Model.moopso.p_objective import get_hlf_boundary
+from Model.mopso.p_objective import get_hlf_boundary
 
 
 # def main1():
@@ -48,7 +48,7 @@ from Model.moopso.p_objective import get_hlf_boundary
 
 
 def main3():
-    config_parameters = initialize.read_yaml_config('../../Benchmark_Deploy_Tool/config.yaml')
+    config_parameters = initialize.read_yaml_config('../../Benchmark-Deploy-Tool/config.yaml')
     ssh_client = initialize.ssh_connect(config_parameters['SSH']['Host'], config_parameters['SSH']['Port'],
                                         config_parameters['SSH']['Username'], config_parameters['SSH']['Password'])
     mysql_connection = initialize.mysql_connect(config_parameters['Database']['Mysql']['Host'],

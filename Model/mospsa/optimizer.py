@@ -5,7 +5,7 @@ import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 
 from Model import initialize
-from Model.moopso.p_objective import convert_to_number
+from Model.mopso.p_objective import convert_to_number
 from Model.mospsa.loss import evacuate_fabric_metric, evacuate_fabric_metric_prediction_model
 
 
@@ -489,7 +489,7 @@ def reverse_min_max_scaling(x_normalized, low, high):
 
 def get_hlf_boundary_2metirc():
     param_range = initialize.read_yaml_config(
-        '../../Benchmark_Deploy_Tool/param_range.yaml')
+        '../../Benchmark-Deploy-Tool/param_range.yaml')
     contained_col = ['Orderer_BatchSize_PreferredMaxBytes', 'Orderer_BatchSize_MaxMessageCount']
     boundary = pd.DataFrame(columns=['Name', 'Lower', 'Upper'], index=range(len(contained_col)))
     boundary['Name'] = boundary['Name'].astype(str)

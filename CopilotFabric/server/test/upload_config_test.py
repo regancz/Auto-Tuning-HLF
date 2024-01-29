@@ -4,7 +4,7 @@ from CopilotFabric.server.service import nacos_client
 
 
 def main():
-    yaml_file_path = 'F:/Project/PythonProject/Auto-Tuning-HLF/Model/moopso/output.yaml'
+    yaml_file_path = '/Model/mopso/output.yaml'
     data_id = "test"
     group = 'test'
 

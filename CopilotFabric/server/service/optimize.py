@@ -8,8 +8,8 @@ from pymoo.optimize import minimize
 from pymoo.termination import get_termination
 
 from CopilotFabric.server.service import logger
-from Model.moopso import p_objective
-from Model.moopso.Mopso import Mopso
+from Model.mopso import p_objective
+from Model.mopso.Mopso import Mopso
 from Model.mospsa.optimizer import spsa_maximize_optimize, get_hlf_boundary_2metirc
 from Model.mospsa.test_ngsa2_2target import FabricProblem
 
