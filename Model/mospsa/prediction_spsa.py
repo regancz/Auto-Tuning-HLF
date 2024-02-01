@@ -1,12 +1,12 @@
-from Benchmark_Deploy_Tool import initialize
 from Benchmark_Deploy_Tool.deploy_fabric import run_fabric
+from Model.initialize import read_yaml_config, ssh_connect, mysql_connect
 
 
 def main():
-    config_parameters = initialize.read_yaml_config('../../Benchmark-Deploy-Tool/config.yaml')
-    ssh_client = initialize.ssh_connect(config_parameters['SSH']['Host'], config_parameters['SSH']['Port'],
+    config_parameters = read_yaml_config('../../Benchmark_Deploy_Tool/config.yaml')
+    ssh_client = ssh_connect(config_parameters['SSH']['Host'], config_parameters['SSH']['Port'],
                                         config_parameters['SSH']['Username'], config_parameters['SSH']['Password'])
-    mysql_connection = initialize.mysql_connect(config_parameters['Database']['Mysql']['Host'],
+    mysql_connection = mysql_connect(config_parameters['Database']['Mysql']['Host'],
                                                 config_parameters['Database']['Mysql']['Port'],
                                                 config_parameters['Database']['Mysql']['User'],
                                                 config_parameters['Database']['Mysql']['Password'],

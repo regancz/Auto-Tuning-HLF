@@ -9,7 +9,6 @@ from torch import optim, nn
 
 from Model import initialize
 from Model.mutil_layer_prediction_model import RegressionModel
-from Model.performance_analyze import calculate_weight
 
 
 def P_objective(Operation, Problem, M, Input):
@@ -59,7 +58,7 @@ def P_DTLZ(Operation, Problem, M, Input):
 
 
 def get_hlf_boundary():
-    param_range = initialize.read_yaml_config('../../Benchmark-Deploy-Tool/param_range.yaml')
+    param_range = initialize.read_yaml_config('../../Benchmark_Deploy_Tool/param_range.yaml')
     boundary = pd.DataFrame(columns=['Name', 'Lower', 'Upper'], index=range(17))
     boundary['Name'] = boundary['Name'].astype(str)
     boundary['Lower'] = boundary['Lower'].astype(float)

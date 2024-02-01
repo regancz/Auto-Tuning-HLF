@@ -112,8 +112,8 @@ def run_fabric_default(ssh_client, mysql_connection, config_parameters, config_i
 
 
 def run_fabric_benchmark(ssh_client, mysql_connection, config_parameters, param_type):
-    # F:\Project\PythonProject\Auto-Tuning-HLF\Benchmark-Deploy-Tool\param_range.yaml
-    param_range = read_yaml_config('/Benchmark-Deploy-Tool/param_range.yaml')
+    # F:\Project\PythonProject\Auto-Tuning-HLF\Benchmark_Deploy_Tool\param_range.yaml
+    param_range = read_yaml_config('/Benchmark_Deploy_Tool/param_range.yaml')
     for k, v in param_range['Parameters'][param_type].items():
         lower = v['lower']
         upper = v['upper']

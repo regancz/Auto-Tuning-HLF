@@ -48,7 +48,7 @@ from Model.mopso.p_objective import get_hlf_boundary
 
 
 def main3():
-    config_parameters = initialize.read_yaml_config('../../Benchmark-Deploy-Tool/config.yaml')
+    config_parameters = initialize.read_yaml_config('../../Benchmark_Deploy_Tool/config.yaml')
     ssh_client = initialize.ssh_connect(config_parameters['SSH']['Host'], config_parameters['SSH']['Port'],
                                         config_parameters['SSH']['Username'], config_parameters['SSH']['Password'])
     mysql_connection = initialize.mysql_connect(config_parameters['Database']['Mysql']['Host'],

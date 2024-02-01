@@ -4,7 +4,7 @@ from Model.initialize import read_yaml_config, mysql_connect
 
 
 def main():
-    configParameters = read_yaml_config('../Benchmark-Deploy-Tool/config.yaml')
+    configParameters = read_yaml_config('../Benchmark_Deploy_Tool/config.yaml')
     mysql_connection, engine = mysql_connect(configParameters['Database']['Mysql']['Host'],
                                              configParameters['Database']['Mysql']['Port'],
                                              configParameters['Database']['Mysql']['User'],

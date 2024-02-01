@@ -10,18 +10,22 @@ from skopt.space import Real
 from Model.mopso.p_objective import get_hlf_boundary
 
 
+count = 0
+
 def obj_fun(params):
     # create & modify & query & open & query & transfer
     payload_function = 'transfer'
     model_name = 'XGBoost'
     # 'throughput', 'avg_latency', 'disc_write'
     target_col = 'throughput'
-    model = joblib.load(f'./traditional_model/{model_name}/{target_col}_{payload_function}_best_model.pkl')
-    feature_input = np.array(params)
-    feature_input = feature_input.reshape([1, 17])
-    output = model.predict(feature_input)
-    return output[0]
-
+    # model = joblib.load(f'./traditional_model/{model_name}/{target_col}_{payload_function}_best_model.pkl')
+    # feature_input = np.array(params)
+    # feature_input = feature_input.reshape([1, 17])
+    # output = model.predict(feature_input)
+    # return output[0]
+    # count += 1
+    print(count)
+    return count
 
 def main():
     start_time = time.time()
