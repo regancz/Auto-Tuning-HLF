@@ -53,30 +53,29 @@ def lasso_test(parameter_rows, performance_rows, weight):
     bench_grouped = df.groupby('bench_config')
     grouped_dfs = []
     for name, group in bench_grouped:
-        if name != 'query':
+        if name != 'query' or name != 'transfer':
             new_df = group.drop('bench_config', axis=1)
             grouped_dfs.append(new_df)
         # grouped_dfs[name] = new_df
-
+    # tx_write_df = df[df['bench_config'].isin(['open'])]
+    # tx_write_df = tx_write_df.drop(columns=['bench_config'])
     tx_write_df = pd.concat(grouped_dfs, axis=0, ignore_index=True)
     scaler = StandardScaler()
     tx_write_df_sc = scaler.fit_transform(tx_write_df)
     tx_write_df_sc = pd.DataFrame(tx_write_df_sc, columns=tx_write_df.columns)
-    y = tx_write_df_sc['throughput'] * weight['throughput'] + tx_write_df_sc['avg_latency'] * weight['avg_latency'] + \
-        tx_write_df_sc['error_rate'] * weight['error_rate'] + tx_write_df_sc['disc_write'] * weight['disc_write']
-    # y = tx_write_df_sc['throughput']
-    X = tx_write_df_sc.drop(['throughput', 'avg_latency', 'error_rate', 'disc_write'],
-                            axis=1)  # be careful inplace=False
+    # + tx_write_df_sc['error_rate'] * weight['error_rate'] , 'error_rate'
+    # y = tx_write_df_sc['throughput'] * weight['throughput'] + tx_write_df_sc['avg_latency'] * weight['avg_latency'] + tx_write_df_sc['disc_write'] * weight['disc_write']
+    y = tx_write_df_sc['throughput']
+    X = tx_write_df_sc.drop(['throughput', 'avg_latency', 'disc_write'], axis=1)
+    # X = tx_write_df_sc
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
-    alpha_lasso = 10 ** np.linspace(-3, 1, 500)
+    alpha_lasso = 10 ** np.linspace(-4, 0, 150)
     lasso = Lasso()
     coefs_lasso = []
-
     for i in alpha_lasso:
         lasso.set_params(alpha=i)
         lasso.fit(X_train, y_train)
         coefs_lasso.append(lasso.coef_)
-
     lasso = Lasso(alpha=10 ** (-2))
     model_lasso = lasso.fit(X_train, y_train)
     coef = pd.Series(model_lasso.coef_, index=X_train.columns)
@@ -85,22 +84,19 @@ def lasso_test(parameter_rows, performance_rows, weight):
     a = pd.DataFrame()
     a['feature'] = fea
     a['importance'] = coef.values
-
     a = a.sort_values('importance', ascending=False, key=abs)
     top_20_features = a.head(13)  # 仅保留前20个重要的属性
 
-    plt.figure(figsize=(12, 8))
-    bars = plt.barh(top_20_features['feature'], top_20_features['importance'])
-    plt.title('Top 20 Important Features')
-    plt.xlabel('Importance')
-    plt.ylabel('Features')
+    # plt.figure(figsize=(12, 8))
+    # bars = plt.barh(top_20_features['feature'], top_20_features['importance'])
+    # plt.title('Top 20 Important Features')
+    # plt.xlabel('Importance')
+    # plt.ylabel('Features')
+    # for bar, imp in zip(bars, top_20_features['importance']):
+    #     plt.text(imp, bar.get_y() + bar.get_height() / 2, f'{imp:.3f}', ha='left', va='center')
+    # plt.show()
 
-    for bar, imp in zip(bars, top_20_features['importance']):
-        plt.text(imp, bar.get_y() + bar.get_height() / 2, f'{imp:.3f}', ha='left', va='center')
-
-    plt.show()
-
-    plt.figure(figsize=(12, 10))
+    plt.figure(figsize=(14, 10))
     ax = plt.gca()
     ax.plot(alpha_lasso, coefs_lasso)
     ax.set_xscale('log')
@@ -108,6 +104,5 @@ def lasso_test(parameter_rows, performance_rows, weight):
     plt.xlabel('alpha')
     plt.ylabel('weights: scaled coefficients')
     # plt.title('Lasso regression coefficients Vs. alpha')
-
     plt.legend(top_20_features['feature'])
     plt.show()

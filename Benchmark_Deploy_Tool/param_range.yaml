@@ -25,10 +25,10 @@ Parameters:
       upper: 60s
       step: 10
   Configtx:
-#    Orderer_BatchTimeout:
-#      lower: 1s
-#      upper: 5s
-#      step: 1
+    Orderer_BatchTimeout:
+      lower: 1s
+      upper: 5s
+      step: 1
     Orderer_BatchSize_MaxMessageCount:
       lower: 10
       upper: 1000

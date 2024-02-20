@@ -1,5 +1,4 @@
 import numpy as np
-import yaml
 from pymoo.algorithms.moo.nsga2 import NSGA2
 from pymoo.operators.crossover.sbx import SBX
 from pymoo.operators.mutation.pm import PM
@@ -11,7 +10,7 @@ from CopilotFabric.server.service import logger
 from Model.mopso import p_objective
 from Model.mopso.Mopso import Mopso
 from Model.mospsa.optimizer import spsa_maximize_optimize, get_hlf_boundary_2metirc
-from Model.mospsa.test_ngsa2_2target import FabricProblem
+from Model.moo.test_ngsa2_2target import FabricProblem
 
 
 def aspsa_maximize():

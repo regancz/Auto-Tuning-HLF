@@ -2,7 +2,7 @@
 
 ## 主要功能：
 
-- Hyperledger Fabric参数调优算法SPSA，ASPSA，MOASPSA，MOPSO，Bayesian的实现
+- Hyperledger Fabric参数调优算法SPSA，ASPSA，NSGA2，SMSEMOA，AGEMOEA，Bayesian的实现
 - 性能预测模型，传统机器学习模型和BP神经网络
 
 ## 运行

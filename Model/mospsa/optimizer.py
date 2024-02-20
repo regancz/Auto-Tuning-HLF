@@ -488,8 +488,7 @@ def reverse_min_max_scaling(x_normalized, low, high):
 
 
 def get_hlf_boundary_2metirc():
-    param_range = initialize.read_yaml_config(
-        '../../Benchmark_Deploy_Tool/param_range.yaml')
+    param_range = initialize.read_yaml_config('../../Benchmark_Deploy_Tool/param_range.yaml')
     contained_col = ['Orderer_BatchSize_PreferredMaxBytes', 'Orderer_BatchSize_MaxMessageCount']
     boundary = pd.DataFrame(columns=['Name', 'Lower', 'Upper'], index=range(len(contained_col)))
     boundary['Name'] = boundary['Name'].astype(str)

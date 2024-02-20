@@ -216,11 +216,12 @@ def calculate_weight(df):
 
 
 def get_dataset_lasso(engine):
-    df = pd.read_sql('dataset_spsa', con=engine)
-    df = df[df['error_rate'] <= 50]
-    df = df.drop(columns=['id', 'performance_id', 'config_id', 'stage', 'config_id', 'broadcast_enqueue_duration', 'blockcutter_block_fill_duration',
-                          'broadcast_validate_duration', 'gossip_state_commit_duration'])
-    performance_df = df[['avg_latency', 'throughput', 'error_rate', 'disc_write']]
+    # dataset_spsa
+    df = pd.read_sql('dataset', con=engine)
+    df = df[df['error_rate'] <= 10]
+    # 'broadcast_enqueue_duration', 'blockcutter_block_fill_duration', 'broadcast_validate_duration', 'gossip_state_commit_duration'
+    df = df.drop(columns=['id', 'performance_id', 'config_id', 'stage', 'error_rate', 'config_id', 'broadcast_enqueue_duration', 'blockcutter_block_fill_duration', 'broadcast_validate_duration', 'gossip_state_commit_duration'])
+    performance_df = df[['avg_latency', 'throughput', 'disc_write']]
     config_df = df.drop(performance_df.columns, axis=1)
     weight = calculate_weight(performance_df)
     param_identification.lasso_test(config_df, performance_df, weight)

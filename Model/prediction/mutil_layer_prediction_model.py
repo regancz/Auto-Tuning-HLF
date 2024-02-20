@@ -118,6 +118,7 @@ class SLRegressionModel(nn.Module):
 
 def train_model_for_sampling(df):
     model_names = ['XGBoost', 'SVR', 'AdaBoost', 'KNeighbors']
+    # model_names = ['SVR']
     for name in model_names:
         if name == 'XGBoost':
             start_point = 400
@@ -125,52 +126,56 @@ def train_model_for_sampling(df):
             end_point = 2001
             for data_size in range(start_point, end_point, increment):
                 train_traditional_model_for_loop(df, data_size, name)
+                break
         elif name == 'SVR':
             start_point = 200
             increment = 200
             end_point = 2001
             for data_size in range(start_point, end_point, increment):
                 train_traditional_model_for_loop(df, data_size, name)
+                break
         elif name == 'AdaBoost':
             start_point = 400
             increment = 400
             end_point = 2001
             for data_size in range(start_point, end_point, increment):
                 train_traditional_model_for_loop(df, data_size, name)
+                break
         elif name == 'KNeighbors':
             train_traditional_model_for_loop(df, 1500, name)
-            train_traditional_model_for_loop(df, 2000, name)
+            break
+            # train_traditional_model_for_loop(df, 2000, name)
         else:
             break
     return
 
 
 def train_traditional_model_for_loop(df, data_size, name):
-    df = df[:data_size]
+    # df = df[:data_size]
     peer_config = df[
-        ['peer_keepalive_minInterval',
-         'peer_keepalive_client_timeout',
-         'peer_gossip_maxBlockCountToStore',
-         'peer_gossip_requestStateInfoInterval',
-         'peer_gossip_publishCertPeriod',
-         'peer_gossip_dialTimeout',
+        ['peer_gossip_dialTimeout',
          'peer_gossip_aliveTimeInterval',
-         'peer_gossip_election_leaderElectionDuration',
-         'peer_deliveryclient_connTimeout',
          'peer_deliveryclient_reConnectBackoffThreshold',
+         'peer_gossip_publishCertPeriod',
+         'peer_gossip_election_leaderElectionDuration',
+         'peer_keepalive_minInterval',
+         'peer_gossip_maxBlockCountToStore',
+         'peer_deliveryclient_connTimeout',
+         'peer_gossip_requestStateInfoInterval',
+         'peer_keepalive_client_timeout',
          'peer_discovery_authCacheMaxSize',
          'peer_discovery_authCachePurgeRetentionRatio']]
     orderer_config = df[
-        ['Orderer_General_Authentication_TimeWindow',
-         'Orderer_General_Keepalive_ServerInterval',
+        ['Orderer_BatchSize_PreferredMaxBytes',
          'Orderer_BatchSize_MaxMessageCount',
-         'Orderer_BatchSize_AbsoluteMaxBytes',
-         'Orderer_BatchSize_PreferredMaxBytes']]
+         'Orderer_General_Authentication_TimeWindow',
+         'Orderer_General_Keepalive_ServerInterval',
+         'Orderer_BatchSize_AbsoluteMaxBytes']]
     metric = df[['throughput', 'avg_latency', 'error_rate', 'disc_write', 'gossip_state_commit_duration',
                  'broadcast_validate_duration',
                  'blockcutter_block_fill_duration', 'broadcast_enqueue_duration']]
     features = pd.concat([peer_config, orderer_config], axis=1)
-    for target_col in ['throughput', 'avg_latency', 'disc_write']:
+    for target_col in ['throughput', 'avg_latency']:
         target = metric[target_col]
         X_train, X_test, y_train, y_test = train_test_split(features, target, test_size=0.2, random_state=42)
         scaler = StandardScaler()
@@ -182,11 +187,17 @@ def train_traditional_model_for_loop(df, data_size, name):
         if name == 'XGBoost':
             model = XGBRegressor()
             param_grid = {
-                'learning_rate': [0.1, 0.5, 0.8, 1.2, 2],
-                'max_depth': [3, 4, 5, 7, 9],
-                'n_estimators': [50, 100, 150, 200],
-                'subsample': [0.3, 0.6, 0.8, 0.9, 1.0],
-                'colsample_bytree': [0.3, 0.5, 0.8],
+                # 'learning_rate': [0.1, 0.5, 0.8, 1.2, 2],
+                # 'max_depth': [3, 4, 5, 7, 9],
+                # 'n_estimators': [50, 100, 150, 200],
+                # 'subsample': [0.3, 0.6, 0.8, 0.9, 1.0],
+                # 'colsample_bytree': [0.3, 0.5, 0.8],
+
+                'learning_rate': [0.2],
+                'max_depth': [3],
+                'n_estimators': [200],
+                'subsample': [0.3],
+                'colsample_bytree': [0.5],
             }
         elif name == 'SVR':
             model = SVR()
@@ -209,27 +220,31 @@ def train_traditional_model_for_loop(df, data_size, name):
                 'algorithm': ['auto', 'ball_tree', 'kd_tree', 'brute'],
                 'leaf_size': [20, 40, 50],
             }
-        grid = GridSearchCV(model, param_grid, scoring=scoring, refit='Error', cv=5)
+        # 定义进度条
+        cv_iterator = tqdm(range(5), desc='Grid Search Progress')
+        grid = GridSearchCV(model, param_grid, scoring=scoring, refit='Error', cv=cv_iterator)
         grid.fit(X_train_scaled, y_train.values)
         best_params = grid.best_params_
         best_model = grid.best_estimator_
         predictions = best_model.predict(X_test_scaled)
-        # joblib.dump(best_model, f'./traditional_model/{name}/{target_col}_best_model.pkl')
+        joblib.dump(best_model, f'../model_dict/{name}/moo_open_{target_col}_best_model.pkl')
         mae = mean_absolute_error(y_test / y_test, predictions / y_test)
-        total_cost = 2 * data_size + mae * 5000
-        logger = logging.getLogger(f"{name}_{target_col}_{data_size}")
-        file_handler = logging.FileHandler(f'./log/sampling/{name}_{target_col}_{data_size}.log')
-        formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-        file_handler.setFormatter(formatter)
-        logger.addHandler(file_handler)
-        logger.info(f"Model: {name} Metric: {target_col} DataSize: {data_size}")
-        logger.info(f"Best parameters: {best_params}")
-        logger.info(f"Error: {mae}")
-        logger.info(f"TotalCost: {total_cost}")
+        # total_cost = 2 * data_size + mae * 5000
+        # logger = logging.getLogger(f"{name}_{target_col}_{data_size}")
+        # file_handler = logging.FileHandler(f'./log/sampling/{name}_{target_col}_{data_size}.log')
+        # formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+        # file_handler.setFormatter(formatter)
+        # logger.addHandler(file_handler)
+        # logger.info(f"Model: {name} Metric: {target_col} DataSize: {data_size}")
+        # logger.info(f"Best parameters: {best_params}")
+        # logger.info(f"Error: {mae}")
+        # logger.info(f"TotalCost: {total_cost}")
+
         print(f"Model: {name} Metric: {target_col} DataSize: {data_size}")
         print(f"Best parameters: {best_params}")
         print(f"Error: {mae}")
-        print(f"TotalCost: {total_cost}")
+        # print(model.predict(X_test))
+        # print(f"TotalCost: {total_cost}")
         print("")
 
 

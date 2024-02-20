@@ -1,12 +1,10 @@
 import time
-import warnings
 
 import joblib
 import pandas as pd
 import torch
 from minio.commonconfig import SnowballObject
 from sklearn.ensemble import AdaBoostRegressor
-from sklearn.exceptions import DataConversionWarning
 from sklearn.metrics import make_scorer, mean_absolute_error
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.neighbors import KNeighborsRegressor
@@ -17,8 +15,7 @@ from xgboost import XGBRegressor
 
 from CopilotFabric.server.api import engine
 from CopilotFabric.server.service import logger, minio_client, model_config
-from Model.initialize import read_yaml_config
-from Model.mutil_layer_prediction_model import RegressionModel
+from Model.prediction.mutil_layer_prediction_model import RegressionModel
 
 
 def bpnn_predict_model():
@@ -38,7 +35,7 @@ def bpnn_predict_model():
                  'peer_gossip_requestStateInfoInterval',
                  'peer_keepalive_client_timeout',
                  'peer_discovery_authCacheMaxSize',
-                 'peer_discovery_authCachePurgeRetentionRatio', ]]
+                 'peer_discovery_authCachePurgeRetentionRatio']]
             orderer_config = df_curr[
                 ['Orderer_BatchSize_PreferredMaxBytes',
                  'Orderer_BatchSize_MaxMessageCount',
@@ -103,24 +100,24 @@ def baseline_predict_model():
         df = df.head(100)
         df = df[df['bench_config'].isin([payload_function])]
         peer_config = df[
-            ['peer_keepalive_minInterval',
-             'peer_keepalive_client_timeout',
-             'peer_gossip_maxBlockCountToStore',
-             'peer_gossip_requestStateInfoInterval',
-             'peer_gossip_publishCertPeriod',
-             'peer_gossip_dialTimeout',
+            ['peer_gossip_dialTimeout',
              'peer_gossip_aliveTimeInterval',
-             'peer_gossip_election_leaderElectionDuration',
-             'peer_deliveryclient_connTimeout',
              'peer_deliveryclient_reConnectBackoffThreshold',
+             'peer_gossip_publishCertPeriod',
+             'peer_gossip_election_leaderElectionDuration',
+             'peer_keepalive_minInterval',
+             'peer_gossip_maxBlockCountToStore',
+             'peer_deliveryclient_connTimeout',
+             'peer_gossip_requestStateInfoInterval',
+             'peer_keepalive_client_timeout',
              'peer_discovery_authCacheMaxSize',
              'peer_discovery_authCachePurgeRetentionRatio']]
         orderer_config = df[
-            ['Orderer_General_Authentication_TimeWindow',
-             'Orderer_General_Keepalive_ServerInterval',
+            ['Orderer_BatchSize_PreferredMaxBytes',
              'Orderer_BatchSize_MaxMessageCount',
-             'Orderer_BatchSize_AbsoluteMaxBytes',
-             'Orderer_BatchSize_PreferredMaxBytes']]
+             'Orderer_General_Authentication_TimeWindow',
+             'Orderer_General_Keepalive_ServerInterval',
+             'Orderer_BatchSize_AbsoluteMaxBytes']]
         metric = df[['throughput', 'avg_latency', 'error_rate', 'disc_write', 'gossip_state_commit_duration',
                      'broadcast_validate_duration',
                      'blockcutter_block_fill_duration', 'broadcast_enqueue_duration']]
@@ -170,7 +167,8 @@ def baseline_predict_model():
                 best_params = grid.best_params_
                 best_model = grid.best_estimator_
                 predictions = best_model.predict(X_test_scaled)
-                joblib.dump(best_model, f'F:/Project/PythonProject/Auto-Tuning-HLF/Model/model_dict/{name}/{name}_{payload_function}_{target_col}.pkl')
+                joblib.dump(best_model,
+                            f'F:/Project/PythonProject/Auto-Tuning-HLF/Model/model_dict/{name}/{name}_{payload_function}_{target_col}.pkl')
                 mae = mean_absolute_error(y_test, predictions)
                 logger.info(f"Model: {name} Metric: {target_col} Best parameters: {best_params} MAE: {mae}")
                 print(f"Model: {name} Metric: {target_col} Best parameters: {best_params} MAE: {mae}")

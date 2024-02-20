@@ -18,5 +18,6 @@ def main():
     elif task_type == 'baseline_predict_model':
         baseline_predict_model()
 
+
 if __name__ == "__main__":
     main()

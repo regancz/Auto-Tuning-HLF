@@ -9,6 +9,8 @@ from Model.mospsa.loss import evacuate_fabric_metric, evacuate_fabric, evacuate_
 from Model.mospsa.optimizer import spsa_maximize, adam_maximize, get_hlf_boundary_2metirc, spsa_maximize_optimize, \
     spsa_maximize2, spsa_maximize3
 from Model.mopso.p_objective import get_hlf_boundary
+from Model.mospsa.test_query_metric import ssh_client
+from Model.prediction import mysql_connection
 
 
 # def main1():
@@ -49,13 +51,13 @@ from Model.mopso.p_objective import get_hlf_boundary
 
 def main3():
     config_parameters = initialize.read_yaml_config('../../Benchmark_Deploy_Tool/config.yaml')
-    ssh_client = initialize.ssh_connect(config_parameters['SSH']['Host'], config_parameters['SSH']['Port'],
-                                        config_parameters['SSH']['Username'], config_parameters['SSH']['Password'])
-    mysql_connection = initialize.mysql_connect(config_parameters['Database']['Mysql']['Host'],
-                                                config_parameters['Database']['Mysql']['Port'],
-                                                config_parameters['Database']['Mysql']['User'],
-                                                config_parameters['Database']['Mysql']['Password'],
-                                                config_parameters['Database']['Mysql']['Database'])
+    # ssh_client = initialize.ssh_connect(config_parameters['SSH']['Host'], config_parameters['SSH']['Port'],
+    #                                     config_parameters['SSH']['Username'], config_parameters['SSH']['Password'])
+    # mysql_connection = initialize.mysql_connect(config_parameters['Database']['Mysql']['Host'],
+    #                                             config_parameters['Database']['Mysql']['Port'],
+    #                                             config_parameters['Database']['Mysql']['User'],
+    #                                             config_parameters['Database']['Mysql']['Password'],
+    #                                             config_parameters['Database']['Mysql']['Database'])
     boundary = get_hlf_boundary_2metirc()
     # np.random.seed(3)
     random_input = np.random.uniform(low=boundary['Lower'].values, high=boundary['Upper'].values)
@@ -73,44 +75,44 @@ def main3():
 
     # Nostop: alpha=0.602, gamma=0.101 c=9.661111877354848
     # Standard Deviation of (throughput - 0.1 * fail): 6.141553199477377
-    # best_params, objective_values, best_objective = spsa_maximize(ssh_client, mysql_connection, config_parameters,
-    #                                                               evacuate_fabric_metric, evacuate_fabric_latency,
-    #                                                               random_input,
-    #                                                               num_iterations=max_iter, rho=1,
-    #                                                               a=10, c=2, A=1, alpha=0.602, gamma=0.101,
-    #                                                               low=boundary['Lower'].values,
-    #                                                               high=boundary['Upper'].values)
-    # print("original spsa best_params:", best_params)
-    # print("original spsa metric:", best_objective)
-    # plt.plot(range(max_iter), objective_values[:max_iter], label='SPSA', marker='o', markersize=3)
-    #
-    # best_params2, objective_values2, best_objective2 = spsa_maximize2(ssh_client, mysql_connection, config_parameters,
-    #                                                                   evacuate_fabric_metric, evacuate_fabric_latency,
-    #                                                                   random_input,
-    #                                                                   num_iterations=max_iter, rho=1,
-    #                                                                   a=10, c=4, A=1, alpha=0.602, gamma=0.101,
-    #                                                                   low=boundary['Lower'].values,
-    #                                                                   high=boundary['Upper'].values)
-    # print("original spsa2 best_params:", best_params2)
-    # print("original spsa2 metric:", best_objective2)
-    #
-    # # plt.rcParams['axes.facecolor'] = 'whitesmoke'
-    # # color='#2c6fbb',
-    # plt.plot(range(len(objective_values2)), objective_values2, label='SSPSA', marker='o', markersize=3)
-    #
-    # best_params3, objective_values3, best_objective3 = spsa_maximize3(ssh_client, mysql_connection, config_parameters,
-    #                                                                   evacuate_fabric_metric, evacuate_fabric_latency,
-    #                                                                   random_input,
-    #                                                                   num_iterations=max_iter, rho=1,
-    #                                                                   a=10, c=4, A=1, alpha=0.602, gamma=0.101,
-    #                                                                   low=boundary['Lower'].values,
-    #                                                                   high=boundary['Upper'].values)
-    # print("original spsa3 best_params:", best_params3)
-    # print("original spsa3 metric:", best_objective3)
-    #
-    # # plt.rcParams['axes.facecolor'] = 'whitesmoke'
-    # # color = '#2c6fbb',
-    # plt.plot(range(len(objective_values3)), objective_values3, label='GSPSA', marker='o', markersize=3)
+    best_params, objective_values, best_objective = spsa_maximize(ssh_client, mysql_connection, config_parameters,
+                                                                  evacuate_fabric_metric, evacuate_fabric_latency,
+                                                                  random_input,
+                                                                  num_iterations=max_iter, rho=1,
+                                                                  a=10, c=2, A=1, alpha=0.602, gamma=0.101,
+                                                                  low=boundary['Lower'].values,
+                                                                  high=boundary['Upper'].values)
+    print("original spsa best_params:", best_params)
+    print("original spsa metric:", best_objective)
+    plt.plot(range(max_iter), objective_values[:max_iter], label='SPSA', marker='o', markersize=3)
+
+    best_params2, objective_values2, best_objective2 = spsa_maximize2(ssh_client, mysql_connection, config_parameters,
+                                                                      evacuate_fabric_metric, evacuate_fabric_latency,
+                                                                      random_input,
+                                                                      num_iterations=max_iter, rho=1,
+                                                                      a=10, c=4, A=1, alpha=0.602, gamma=0.101,
+                                                                      low=boundary['Lower'].values,
+                                                                      high=boundary['Upper'].values)
+    print("original spsa2 best_params:", best_params2)
+    print("original spsa2 metric:", best_objective2)
+
+    # plt.rcParams['axes.facecolor'] = 'whitesmoke'
+    # color='#2c6fbb',
+    plt.plot(range(len(objective_values2)), objective_values2, label='SSPSA', marker='o', markersize=3)
+
+    best_params3, objective_values3, best_objective3 = spsa_maximize3(ssh_client, mysql_connection, config_parameters,
+                                                                      evacuate_fabric_metric, evacuate_fabric_latency,
+                                                                      random_input,
+                                                                      num_iterations=max_iter, rho=1,
+                                                                      a=10, c=4, A=1, alpha=0.602, gamma=0.101,
+                                                                      low=boundary['Lower'].values,
+                                                                      high=boundary['Upper'].values)
+    print("original spsa3 best_params:", best_params3)
+    print("original spsa3 metric:", best_objective3)
+
+    # plt.rcParams['axes.facecolor'] = 'whitesmoke'
+    # color = '#2c6fbb',
+    plt.plot(range(len(objective_values3)), objective_values3, label='GSPSA', marker='o', markersize=3)
 
     best_params_optimize, objective_values_optimize, best_objective_optimize, param_ledger_preferred, param_ledger_count, metric_ledger = spsa_maximize_optimize(
         random_input,

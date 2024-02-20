@@ -25,6 +25,6 @@ def mysql_connect(host, port, user, password, db):
 
 
 def read_yaml_config(yaml_file):
-    with open(yaml_file, 'r') as file:
+    with open(yaml_file, 'rb') as file:
         config_data = yaml.safe_load(file)
     return config_data

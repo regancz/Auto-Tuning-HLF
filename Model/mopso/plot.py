@@ -62,32 +62,33 @@ class Plot_pareto:
         # # animation.save('particle_animation.gif', writer='pillow')
         # # plt.show()
 
-        fig = plt.figure()
-        ax = fig.add_subplot(111, projection='3d')
-
-        # 绘制点
-        ax.scatter(fitness_[:, 0], fitness_[:, 1], fitness_[:, 2], s=10, c='blue', marker=".")
-        ax.scatter(archive_fitness[:, 0], archive_fitness[:, 1], archive_fitness[:, 2], s=30, c='red', marker=".",
-                   alpha=1.0)
-
-        # 设置坐标轴标签
-        ax.set_xlabel('throughput')
-        ax.set_ylabel('avg_latency')
-        ax.set_zlabel('disc_write')
-
-        # 对fitness_进行插值并绘制曲面
-        x = fitness_[:, 0]
-        y = fitness_[:, 1]
-        z = fitness_[:, 2]
-        plt.scatter(x, y, z)
-        plt.show()
-        xi = np.linspace(min(x), max(x), 100)
-        yi = np.linspace(min(y), max(y), 100)
-        xi, yi = np.meshgrid(xi, yi)
-
-        zi = griddata((x, y), z, (xi, yi), method='cubic')  # 使用cubic插值方法进行插值
-        ax.plot_surface(xi, yi, zi, cmap='viridis', alpha=0.5)  # 以较低的alpha值绘制曲面，以便看到散点
-        plt.show()
+        # fig = plt.figure()
+        # ax = fig.add_subplot(111, projection='3d')
+        #
+        # # 绘制点
+        # ax.scatter(fitness_[:, 0], fitness_[:, 1], fitness_[:, 2], s=10, c='blue', marker=".")
+        # ax.scatter(archive_fitness[:, 0], archive_fitness[:, 1], archive_fitness[:, 2], s=30, c='red', marker=".",
+        #            alpha=1.0)
+        #
+        # # 设置坐标轴标签
+        # ax.set_xlabel('throughput')
+        # ax.set_ylabel('avg_latency')
+        # ax.set_zlabel('disc_write')
+        #
+        # # 对fitness_进行插值并绘制曲面
+        # x = fitness_[:, 0]
+        # y = fitness_[:, 1]
+        # z = fitness_[:, 2]
+        # plt.scatter(x, y, z)
+        # plt.show()
+        # xi = np.linspace(min(x), max(x), 100)
+        # yi = np.linspace(min(y), max(y), 100)
+        # xi, yi = np.meshgrid(xi, yi)
+        #
+        # zi = griddata((x, y), z, (xi, yi), method='cubic')  # 使用cubic插值方法进行插值
+        # ax.plot_surface(xi, yi, zi, cmap='viridis', alpha=0.5)  # 以较低的alpha值绘制曲面，以便看到散点
+        # plt.show()
+        pass
 
 
 class Designer:

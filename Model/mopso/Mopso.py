@@ -23,7 +23,7 @@ class Mopso:
 
     def evaluation_fitness(self):
         # self.fitness_ = P_objective.P_objective("value", "DTLZ2", 2, self.in_)
-        self.fitness_ = model_predict_four_metric(self.in_, 'bpnn')
+        self.fitness_ = model_predict_four_metric(self.in_, 'XGBoost')
 
     def initialize(self):
         # 初始化粒子位置

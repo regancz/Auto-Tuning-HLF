@@ -71,19 +71,19 @@ def evacuate_fabric_metric_prediction_model(input_param, rho):
     # create & modify & query & open & query & transfer
     # payload_function = 'transfer'
     # ['XGBoost', 'SVR', 'AdaBoost', 'KNeighbors']
-    model_name = random.choice(['SVR'])
+    model_name = random.choice(['svr'])
     # 'throughput', 'avg_latency', 'disc_write'
     # for target_col in ['disc_write']:
-    model_throughput = joblib.load(f'F:/Project/PythonProject/Auto-Tuning-HLF/Model/traditional_model/spsa/{model_name}/{cc_name}_throughput_2metric_model.pkl')
+    model_throughput = joblib.load(f'F:/Project/PythonProject/Auto-Tuning-HLF/Model/model_dict/{model_name}/{cc_name}_throughput_2metric_model.pkl')
     throughput = model_throughput.predict(input_param)
     # print(model_name)
-    model_error_rate = joblib.load(f'F:/Project/PythonProject/Auto-Tuning-HLF/Model/traditional_model/spsa/{model_name}/{cc_name}_error_rate_2metric_model.pkl')
-    error_rate = model_error_rate.predict(input_param)
+    # model_error_rate = joblib.load(f'F:/Project/PythonProject/Auto-Tuning-HLF/Model/model_dict/{model_name}/{cc_name}_error_rate_2metric_model.pkl')
+    # error_rate = model_error_rate.predict(input_param)
     # fail = 0
-    model_disc_write = joblib.load(f'F:/Project/PythonProject/Auto-Tuning-HLF/Model/traditional_model/spsa/{model_name}/{cc_name}_disc_write_2metric_model.pkl')
+    model_disc_write = joblib.load(f'F:/Project/PythonProject/Auto-Tuning-HLF/Model/model_dict/{model_name}/{cc_name}_disc_write_2metric_model.pkl')
     disc_write = model_disc_write.predict(input_param)
 
-    model_avg_latency = joblib.load(f'F:/Project/PythonProject/Auto-Tuning-HLF/Model/traditional_model/spsa/{model_name}/{cc_name}_avg_latency_2metric_model.pkl')
+    model_avg_latency = joblib.load(f'F:/Project/PythonProject/Auto-Tuning-HLF/Model/model_dict/{model_name}/{cc_name}_avg_latency_2metric_model.pkl')
     avg_latency = model_avg_latency.predict(input_param)
 
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d")
@@ -98,8 +98,8 @@ def evacuate_fabric_metric_prediction_model(input_param, rho):
     logger.addHandler(file_handler)
 
     # logger.info(f"input_param: {input_param} throughput: {throughput} error_rate: {error_rate} disc_write: {disc_write}")
-    print(f"input_param: {input_param} throughput: {throughput} error_rate: {error_rate} disc_write: {disc_write}")
-    return (throughput + rho * disc_write)
+    # print(f"input_param: {input_param} throughput: {throughput} error_rate: {error_rate} disc_write: {disc_write}")
+    return (throughput + rho * disc_write + random.randint(-2, 2))
 
 
 def evacuate_fabric_metric(ssh_client, mysql_connection, config_parameters, input_param, payload_function):

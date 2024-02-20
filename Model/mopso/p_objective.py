@@ -1,14 +1,10 @@
-import random
-
 import joblib
-import numpy
 import numpy as np
 import pandas as pd
 import torch
-from torch import optim, nn
 
 from Model import initialize
-from Model.mutil_layer_prediction_model import RegressionModel
+from Model.prediction.mutil_layer_prediction_model import RegressionModel
 
 
 def P_objective(Operation, Problem, M, Input):
@@ -64,27 +60,31 @@ def get_hlf_boundary():
     boundary['Lower'] = boundary['Lower'].astype(float)
     boundary['Upper'] = boundary['Upper'].astype(float)
     idx = 0
-    contained_col = ['peer_gossip_dialTimeout',
-                     'peer_gossip_aliveTimeInterval',
-                     'peer_deliveryclient_reConnectBackoffThreshold',
-                     'peer_gossip_publishCertPeriod',
-                     'peer_gossip_election_leaderElectionDuration',
-                     'peer_keepalive_minInterval',
-                     'peer_gossip_maxBlockCountToStore',
-                     'peer_deliveryclient_connTimeout',
-                     'peer_gossip_requestStateInfoInterval',
-                     'peer_keepalive_client_timeout',
-                     'peer_discovery_authCacheMaxSize',
-                     'peer_discovery_authCachePurgeRetentionRatio',
-                     'Orderer_BatchSize_PreferredMaxBytes',
-                     'Orderer_BatchSize_MaxMessageCount',
-                     'General_Authentication_TimeWindow',
-                     'General_Keepalive_ServerInterval',
-                     'Orderer_BatchSize_AbsoluteMaxBytes']
+    contained_col = [
+        'peer_gossip_dialTimeout',
+        'peer_gossip_aliveTimeInterval',
+        'peer_deliveryclient_reConnectBackoffThreshold',
+        'peer_gossip_publishCertPeriod',
+        'peer_gossip_election_leaderElectionDuration',
+        'peer_keepalive_minInterval',
+        'peer_gossip_maxBlockCountToStore',
+        'peer_deliveryclient_connTimeout',
+        'peer_gossip_requestStateInfoInterval',
+        'peer_keepalive_client_timeout',
+        'peer_discovery_authCacheMaxSize',
+        'peer_discovery_authCachePurgeRetentionRatio',
+        'Orderer_BatchSize_PreferredMaxBytes',
+        'Orderer_BatchSize_MaxMessageCount',
+        'General_Authentication_TimeWindow',
+        'General_Keepalive_ServerInterval',
+        'Orderer_BatchSize_AbsoluteMaxBytes']
     # Order:6, Configtx:4, Peer:48
     for param_type in ['Peer', 'Orderer', 'Configtx']:
-        for k, v in param_range['Parameters'][param_type].items():
-            if k in contained_col:
+        for k in contained_col:
+            if k in param_range['Parameters'][param_type]:
+                v = param_range['Parameters'][param_type][k]
+        # for k, v in param_range['Parameters'][param_type].items():
+        #     if k in contained_col:
                 lower = v['lower']
                 upper = v['upper']
                 lower_value, unit = convert_to_number(str(lower))
@@ -110,9 +110,9 @@ def model_predict_four_metric(input, model_name):
     if model_name == 'bpnn':
         predictions_combined = None
         payload_function = 'open'
-        for target_col in ['throughput', 'avg_latency', 'disc_write']:
+        for target_col in ['throughput', 'avg_latency']:
             model = RegressionModel()
-            model.load_state_dict(torch.load(f'../../Model/model_dict/bpnn/bpnn_{payload_function}_{target_col}.pth'))
+            model.load_state_dict(torch.load(f'../../Model/model_dict/bpnn/moo_bpnn_{payload_function}_{target_col}.pth'))
             peer_config = input[:, :12]
             orderer_config = input[:, 12:]
             output = []
@@ -121,16 +121,16 @@ def model_predict_four_metric(input, model_name):
             #     output.append(out.item())
             output = model(peer_config=peer_config[:, :], orderer_config=orderer_config[:, :], metric=input[:, :])
             if predictions_combined is None:
-                predictions_combined = output.detach().numpy()
+                predictions_combined = -output.detach().numpy()
             else:
                 predictions_combined = np.column_stack((predictions_combined, output.detach().numpy()))
         return predictions_combined
-    elif model_name == 'XGBoost':
+    elif model_name != 'bpnn':
         predictions_combined = None
         # create & modify & query & open & query & transfer
         payload_function = 'open'
-        for target_col in ['throughput', 'avg_latency', 'disc_write']:
-            model = joblib.load(f'../traditional_model/{model_name}/{target_col}_{payload_function}_best_model.pkl')
+        for target_col in ['throughput', 'avg_latency']:
+            model = joblib.load(f'../../Model/model_dict/{model_name}/moo_open_{target_col}_best_model.pkl')
             prediction = model.predict(input)
             if predictions_combined is None:
                 predictions_combined = prediction

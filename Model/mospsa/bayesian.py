@@ -9,8 +9,8 @@ from skopt.space import Real
 
 from Model.mopso.p_objective import get_hlf_boundary
 
-
 count = 0
+
 
 def obj_fun(params):
     # create & modify & query & open & query & transfer
@@ -26,6 +26,7 @@ def obj_fun(params):
     # count += 1
     print(count)
     return count
+
 
 def main():
     start_time = time.time()

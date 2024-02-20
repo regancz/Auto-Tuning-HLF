@@ -21,7 +21,6 @@ def testFunc(x, n):
     return res
 
 
-##伯努利分布
 def bonuli(n):
     res = np.zeros(n)
     for i in range(0, n):
@@ -118,4 +117,3 @@ if __name__ == '__main__':
     x = np.linspace(1, my.iterNum, my.iterNum)
     plt.plot(x, obj_iter)
     fig_obj.show()
-

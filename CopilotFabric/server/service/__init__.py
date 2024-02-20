@@ -20,10 +20,4 @@ minio_client = Minio(
 
 model_config = read_yaml_config('F:/Project/PythonProject/Auto-Tuning-HLF/CopilotFabric/server/model_config.yaml')
 
-SERVER_ADDRESSES = "192.168.3.39:8848"
-NAMESPACE = "copilotfabric"
 
-# no auth mode
-nacos_client = nacos.NacosClient(SERVER_ADDRESSES, namespace=NAMESPACE)
-# auth mode
-# client = nacos.NacosClient(SERVER_ADDRESSES, namespace=NAMESPACE, ak="{ak}", sk="{sk}")

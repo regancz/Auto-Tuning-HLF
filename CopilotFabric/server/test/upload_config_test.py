@@ -1,9 +1,18 @@
 import uuid
 
-from CopilotFabric.server.service import nacos_client
+import nacos
+
+SERVER_ADDRESSES = "192.168.3.39:8848"
+NAMESPACE = "copilotfabric"
+
+# no auth mode
+nacos_client = nacos.NacosClient(SERVER_ADDRESSES, namespace=NAMESPACE)
 
 
 def main():
+
+    # auth mode
+    # client = nacos.NacosClient(SERVER_ADDRESSES, namespace=NAMESPACE, ak="{ak}", sk="{sk}")
     yaml_file_path = '/Model/mopso/output.yaml'
     data_id = "test"
     group = 'test'
