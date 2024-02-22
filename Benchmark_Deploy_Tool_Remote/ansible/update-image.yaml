@@ -1,0 +1,25 @@
+---
+- hosts: cdt
+  remote_user: charles
+  vars:
+    dest_dir: /home/charles/Project/Blockchain/ansible/images
+  tasks:
+  - name: mkdir into /home/charles/Project/Blockchain/ansible/images
+    shell: mkdir -p {{dest_dir}}
+    ignore_errors: True
+
+  - name: Copy docker images into /home/charles/Project/Blockchain/ansible/images
+    copy: src={{dest_dir}} dest=/home/charles/Project/Blockchain/ansible
+          force=true  # 是否强制更新，false如果存在则不更新
+
+  - name: docker load [peer] /home/charles/Project/Blockchain/ansible/images
+    shell: docker load --input {{dest_dir}}/peer-docker.tar
+
+  - name: docker load [orderer] /home/charles/Project/Blockchain/ansible/images
+    shell: docker load --input {{dest_dir}}/orderer-docker.tar
+
+  - name: docker load [ca] /home/charles/Project/Blockchain/ansible/images
+    shell: docker load --input {{dest_dir}}/ca-docker.tar
+    
+  - name: docker load [ccenv] /home/charles/Project/Blockchain/ansible/images
+    shell: docker load --input {{dest_dir}}/ccenv-docker.tar

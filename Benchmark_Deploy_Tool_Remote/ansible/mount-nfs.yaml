@@ -1,0 +1,19 @@
+---
+- hosts: cdt
+  remote_user: charles
+  vars:
+    dest_dir: /home/charles/Project/Blockchain/ansible/nfs
+    nfs: 192.168.3.39
+  tasks:
+  - name: mkdir into {{dest_dir}}
+    shell: mkdir -p {{dest_dir}}
+    ignore_errors: True
+
+  - name: apt install nfs-common
+    shell: apt install -y nfs-common 
+    ignore_errors: True
+
+  - name: mount {{nfs}}:/ to  {{dest_dir}}
+  # mount -t nfs 192.168.3.39:/ /home/charles/Project/Blockchain/ansible/nfs
+  # mount -t nfs -o 192.168.3.12:/home/charles/Project/Blockchain/ansible/nfs /home/charles/Project/Blockchain/ansible/nfs
+    shell: mount -t nfs {{nfs}}:/home/charles/Project/Blockchain/ansible/nfs {{dest_dir}}

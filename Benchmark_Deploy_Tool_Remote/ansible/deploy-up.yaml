@@ -1,0 +1,25 @@
+---
+- hosts: cdt
+  remote_user: charles
+  vars:
+    destdir: /home/charles/Project/Blockchain/ansible
+    srcdir: /home/charles/Project/Blockchain/caliper-deploy-tool/dist
+    # /home/charles/Project/Blockchain/caliper-deploy-tool/dist/docker-compose-192.168.3.39.yaml
+  tasks:
+
+  - name: Copy docker config to {{destdir}}
+    copy: src={{srcdir}}/docker-compose-{{ip}}.yaml dest={{destdir}}/docker-compose.yaml
+          force=true
+
+  # - name: boot with conda
+  #   shell: source /root/miniconda3/bin/activate caliper && docker-compose -f {{destdir}}/docker-compose.yaml up -d
+  #   args:
+  #     executable: /bin/bash
+  #   ignore_errors: True
+
+  - name: boot
+    shell: docker-compose -f {{destdir}}/docker-compose.yaml up -d
+
+
+
+
