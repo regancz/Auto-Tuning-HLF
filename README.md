@@ -17,3 +17,7 @@ or
 conda activate CopilotFabric
 pip install -r requirements.txt
 ```
+
+## TODO
+
+优化代码结构，模块化设计，参数注入，输出日志，日志存储
