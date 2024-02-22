@@ -21,3 +21,7 @@ pip install -r requirements.txt
 ## TODO
 
 优化代码结构，模块化设计，参数注入，输出日志，日志存储
+
+## 功能预览
+
+![Dashboard1](https://github.com/regancz/Auto-Tuning-HLF/blob/master/pic/grafana1.png "grafana1")
