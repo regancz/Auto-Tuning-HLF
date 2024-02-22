@@ -13,3 +13,5 @@ sql文件夹建表
 修改 param_range.yaml其中lower，upper，step上下限和步长，注意单位
 
 修改config.yaml，服务器，数据库，参数配置地址
+
+main.py 启动

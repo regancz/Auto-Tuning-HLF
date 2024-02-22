@@ -10,15 +10,10 @@
 
 ### Install
 
-- ansible
+- ansible jinja2
 
   ```shell
   pip3 install ansible
-  ```
-
-- jinja2
-
-  ```shell
   pip3 install jinja2
   ```
 
