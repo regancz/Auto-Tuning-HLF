@@ -8,7 +8,7 @@
 
 ## 运行
 
-client为前端，Vue、ElementUI
+前端为[Auto-Tuning-HLF-Vue](https://github.com/regancz/Auto-Tuning-HLF-Vue)，Vue、ElementUI实现
 
 ```
 npm install
