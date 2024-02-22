@@ -24,4 +24,23 @@ pip install -r requirements.txt
 
 ## 功能预览
 
+![web_overview](https://github.com/regancz/Auto-Tuning-HLF/blob/master/pic/web_overview.png "web_overview")
+
+![task_log](https://github.com/regancz/Auto-Tuning-HLF/blob/master/pic/task_log.png "task_log")
+
+![nacos_config](https://github.com/regancz/Auto-Tuning-HLF/blob/master/pic/nacos_config.png "nacos_config")
+
 ![Dashboard1](https://github.com/regancz/Auto-Tuning-HLF/blob/master/pic/grafana1.png "grafana1")
+
+![Dashboard2](https://github.com/regancz/Auto-Tuning-HLF/blob/master/pic/grafana2.png "grafana2")
+
+![Dashboard3](https://github.com/regancz/Auto-Tuning-HLF/blob/master/pic/grafana3.png "grafana3")
+
+![Dashboard4](https://github.com/regancz/Auto-Tuning-HLF/blob/master/pic/grafana4.png "grafana4")
+
+![query_metric](https://github.com/regancz/Auto-Tuning-HLF/blob/master/pic/query_metric.png "query_metric")
+
+
+
+
+
