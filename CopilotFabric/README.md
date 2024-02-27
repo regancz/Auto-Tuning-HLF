@@ -17,6 +17,10 @@ npm run dev
 
 nacos，grafana，xxljob需要登录的情况，需要自行启动Nginx进行代理，并修改iframe标签内容
 
+为了防止CSRF攻击，在跨域的过程中，cookie被过滤掉了，可以考虑开启Nginx通过代理来解决，但目前并不生效，不清楚原因，因此使用的是chrome插件，解决SameSite的限制
+
+（Chrome在很早以前就不支持对SameSite进行显式更改，在Nginx中无论是更改属性还是携带Cookie都无法解决，原因未知。）
+
 test提供了基本功能测试
 
 server：main.py 启动
