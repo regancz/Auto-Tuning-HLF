@@ -11,7 +11,7 @@
 
 ```
 python main.py --task param_select
-					  bpnn_predict_model
-					  baseline_predict_model
+                 bpnn_predict_model
+                 baseline_predict_model
 ```
 
