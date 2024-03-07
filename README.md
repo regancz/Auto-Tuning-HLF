@@ -22,7 +22,7 @@ Web Database：MySQL，MongoDB（日志）
 
 Blockchain：Caliper，Hyperledger FabricV2.4/2.5，Promethetus，Grafana，Ansible，NFS
 
-所有组件均采用Docker部署，Docker Compose进行容器编排
+所有组件均采用Docker部署，Docker Compose进行容器编排，k8s部署参考repo：https://github.com/GrgChain/baasmanager
 
 ## TODO
 
