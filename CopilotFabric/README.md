@@ -1,12 +1,12 @@
 # CopilotFabric
 
-## 主要功能：
+## Features：
 
 - Dashboard指标统计，通过SSH调用Docker指令实现
 - 调用优化算法ASPSA，INSGA2对Fabric参数调优
 - 性能预测模型，传统机器学习模型和BP神经网络
 
-## 运行
+## Quick Start
 
 前端为[Auto-Tuning-HLF-Vue](https://github.com/regancz/Auto-Tuning-HLF-Vue)，Vue、ElementUI实现
 
